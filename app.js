@@ -1,7 +1,8 @@
 const { App, LogLevel } = require('@slack/bolt');
 const { config } = require('dotenv');
-const { registerListeners } = require('./listeners');
+const mentions = require('./mentions');
 
+/** Configure Environment Variables */
 config();
 
 /** Initialization */
@@ -13,7 +14,7 @@ const app = new App({
 });
 
 /** Register Listeners */
-registerListeners(app);
+mentions.register(app);
 
 /** Start Bolt App */
 (async () => {
