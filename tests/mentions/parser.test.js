@@ -1,4 +1,4 @@
-const { parser } = require('../../mentions/parser');
+const { parser } = require('../../mentions/handler');
 
 test('parser should parse a command to create a new rota', () => {
   const input = 'create "standup" "daily standup"';

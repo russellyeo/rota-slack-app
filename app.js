@@ -1,6 +1,7 @@
 const { App, LogLevel } = require('@slack/bolt');
 const { config } = require('dotenv');
 const mentions = require('./mentions');
+const { APIService } = require('./networking/api_service');
 
 /** Configure Environment Variables */
 config();
@@ -12,9 +13,12 @@ const app = new App({
   appToken: process.env.SLACK_APP_TOKEN,
   logLevel: LogLevel.DEBUG,
 });
+const service = new APIService({
+  baseURL: process.env.ROTA_API_URL,
+});
 
 /** Register Listeners */
-mentions.register(app);
+mentions.register(app, service);
 
 /** Start Bolt App */
 (async () => {

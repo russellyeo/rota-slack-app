@@ -1,13 +1,11 @@
-const { parser } = require('./parser');
+const handler = require('./handler');
 
-module.exports.register = (app) => {
-  app.event('app_mention', async({ event, context }) => {
-    
+module.exports.register = (app, service) => {
+  app.event('app_mention', async({ event, say }) => {
     // Drop the slack username if present
     const input = event.text.replace(/^<@(U[A-Z0-9]+?)>\s*/, '');
-    console.log(`🟠 Input text: ${clean}`);
 
-    const command = parser.parse(input);
-    console.log(command);
+    // Parse and handle input
+    handler.handle(input, service, say);
   });
 };
