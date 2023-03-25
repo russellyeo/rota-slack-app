@@ -18,24 +18,22 @@ jest.mock('../networking/api_service', () => {
 });
 
 test('list rotas', async () => {
-  // GIVEN
   const mockAPIService = new APIService({ baseURL: 'https://example.com' });
   const mockSay = jest.fn();
   const input = 'list';
-  // WHEN
+
   await handler.handle(input, mockAPIService, mockSay);
-  // THEN
+
   expect(mockAPIService.getRotas).toHaveBeenCalledWith();
 });
 
 test('create a new rota', async () => {
-  // GIVEN
   const mockAPIService = new APIService({ baseURL: 'https://example.com' });
   const mockSay = jest.fn();
   const input = 'create "Search UX Team Standup" "Daily Standup"';
-  // WHEN
+
   await handler.handle(input, mockAPIService, mockSay);
-  // THEN
+  
   expect(mockAPIService.createRota).toHaveBeenCalledWith('Search UX Team Standup', 'Daily Standup');
 });
 
