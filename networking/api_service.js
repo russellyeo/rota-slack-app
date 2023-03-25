@@ -14,6 +14,21 @@ class APIService {
     return data;
   }
 
+  async createRota(name, description) {
+    const response = await fetch(`${this.baseURL}/api/rotas`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ name, description })
+    });
+    if (!response.ok) {
+      throw new Error(`Error posting ${url}: ${response.statusText}`);
+    }
+    const responseData = await response.json();
+    return responseData;
+  }
+
 }
 
 module.exports = { APIService };
