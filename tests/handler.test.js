@@ -24,5 +24,5 @@ test('handler should handle a command to create a new rota', async () => {
   
   await handler.handle(input, mockAPIService, mockSay);
   
-  expect(mockAPIService.createRota).toHaveBeenCalledWith('"Search UX Team Standup"', '"Daily Standup"');
+  expect(mockAPIService.createRota).toHaveBeenCalledWith('Search UX Team Standup', 'Daily Standup');
 });
