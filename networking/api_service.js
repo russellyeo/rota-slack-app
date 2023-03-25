@@ -8,7 +8,7 @@ class APIService {
     const url = `${this.baseURL}/api/rotas`;
     const response = await fetch(url);
     if (!response.ok) {
-      throw new Error(`Error fetching ${url}: ${response.statusText}`);
+      throw new Error("Could not retrieve rotas");
     }
     const data = await response.json();
     return data;
@@ -23,7 +23,7 @@ class APIService {
       body: JSON.stringify({ name, description })
     });
     if (!response.ok) {
-      throw new Error(`Error posting ${url}: ${response.statusText}`);
+      throw new Error("Could not create rota");
     }
     const responseData = await response.json();
     return responseData;
