@@ -1,12 +1,11 @@
-/* 
+/*
   Create
   @Rota create "[rotation-name]" [optional description]
 */
-module.exports = async (service, name, description) => {
+module.exports = async (name, description, service, say) => {
   try {
-    service.createRota(name, description);
-  }
-  catch (error) {
-    console.log("🔴 Error: could not create rota:", name, description);
+    await service.createRota(name, description);
+  } catch (error) {
+    await say(error.message);
   }
 };
