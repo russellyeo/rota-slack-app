@@ -5,16 +5,33 @@
 module.exports = async (service, say) => {
   try {
     const rotas = await service.getRotas();
-    const string = buildMarkdownString(rotas);
+    const string = buildMarkdownList(rotas);
     await say({
       "blocks": [
         {
           "type": "section",
           "text": {
             "type": "mrkdwn",
+            "text": "*Your current rotas*"
+          }
+        },
+        {
+          "type": "section",
+          "text": {
+            "type": "mrkdwn",
             "text": string
           }
-        }
+        },
+        {
+          "type": "divider"
+        },
+        {
+          "type": "section",
+          "text": {
+            "type": "mrkdwn",
+            "text": "Try `@Rota help` for to see a list of possible commands"
+          }
+        },
       ]
     });
   }
@@ -23,14 +40,13 @@ module.exports = async (service, say) => {
   }
 };
 
-function buildMarkdownString(rotas) {
-  let string = 'Rotas:\n';
-  rotas.forEach(rota => {
-    string += `- ${rota.name}: `;
+function buildMarkdownList(rotas) {
+  const lines = rotas.map(rota => {
+    let line = `\`${rota.name}\` - `;
     if (rota.description) {
-      string += `${rota.description}\n`;
+      line += `${rota.description}`;
     }
-    string += '\n';
+    return line;
   });
-  return string;
+  return lines.join('\n');
 };
