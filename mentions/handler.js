@@ -29,6 +29,12 @@ const handle = async (text, service, say) => {
         executeCreate(service, name, description);
       }
     })
+    .command({
+      command: '*', 
+      handler: () => {
+        say('unknown command');
+      }
+    })
     .parse(text);
 };
 

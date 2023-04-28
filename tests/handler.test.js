@@ -37,3 +37,14 @@ test('create a new rota', async () => {
   expect(mockAPIService.createRota).toHaveBeenCalledWith('Search UX Team Standup', 'Daily Standup');
 });
 
+test('unknown command', async () => {
+  const mockAPIService = new APIService({ baseURL: 'https://example.com' });
+  const mockSay = jest.fn();
+  const input = 'unknown command';
+
+  await handler.handle(input, mockAPIService, mockSay);
+  
+  expect(mockSay).toHaveBeenCalledTimes(1);
+  expect(mockSay).toHaveBeenCalledWith("unknown command");
+});
+

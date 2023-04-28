@@ -5,7 +5,6 @@
 module.exports = async (service, say) => {
   try {
     const rotas = await service.getRotas();
-    console.log("🟠 Got rotas:", rotas);
     const string = buildMarkdownString(rotas);
     await say({
       "blocks": [
