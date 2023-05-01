@@ -2,6 +2,7 @@ const parser = require('yargs');
 
 const executeCreate = require('./commands/create');
 const executeDelete = require('./commands/delete');
+const executeHelp = require('./commands/help');
 const executeList = require('./commands/list');
 
 function removeQuotes(string) {
@@ -9,12 +10,20 @@ function removeQuotes(string) {
 }
 
 const handle = async (text, service, say) => {
+  console.log("[TEST] HANDLE");
   parser
     .command({
       command: 'list',
       handler: () => {
         executeList(service, say);
-      },
+      }
+    })
+    .command({
+      command: 'help',
+      handler: () => {
+        console.log("[TEST] HELP");
+        executeHelp(say);
+      }
     })
     .command({
       command: 'create <name> [description]',
@@ -32,7 +41,7 @@ const handle = async (text, service, say) => {
         const name = removeQuotes(argv.name);
         const description = argv.description ? removeQuotes(argv.description) : undefined;
         executeCreate(name, description, service, say);
-      },
+      }
     })
     .command({
       command: 'delete <name>',
@@ -45,14 +54,15 @@ const handle = async (text, service, say) => {
       handler: (argv) => {
         const name = removeQuotes(argv.name);
         executeDelete(name, service, say);
-      },
+      }
     })
     .command({
       command: '*',
       handler: () => {
         say('unknown command');
-      },
+      }
     })
+    .help(false)
     .parse(text);
 };
 

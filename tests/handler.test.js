@@ -58,6 +58,12 @@ describe('app_mentions handler', () => {
     });
   });
 
+  it('should list available commands when asked for help', async () => {
+    const input = 'help';
+    await handler.handle(input, mockAPIService, mockSay);
+    expect(mockSay).toHaveBeenCalledTimes(1);
+  });
+
   it('should create a new rota with a name and description', async () => {
     const input = 'create "standup" "daily standup"';
     await handler.handle(input, mockAPIService, mockSay);
