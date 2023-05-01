@@ -22,7 +22,7 @@ class APIService {
       body: JSON.stringify({ name, description }),
     });
     if (!response.ok) {
-      throw new Error('Could not create rota');
+      throw new Error(`Could not create rota \`${name}\``);
     }
     const responseData = await response.json();
     return responseData;
@@ -36,7 +36,7 @@ class APIService {
       },
     });
     if (!response.ok) {
-      throw new Error(`Could not delete rota ${name}`);
+      throw new Error(`Could not delete rota \`${name}\``);
     }
     const responseData = await response.json();
     return responseData;
