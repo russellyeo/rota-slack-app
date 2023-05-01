@@ -17,34 +17,49 @@ async function listRotas(service, say) {
   try {
     const rotas = await service.getRotas();
     const string = buildMarkdownList(rotas);
-    await say({
-      blocks: [
-        {
-          type: 'section',
-          text: {
-            type: 'mrkdwn',
-            text: '*Your current rotas*',
+
+    if (rotas.length === 0) {
+      await say({
+        blocks: [
+          {
+            type: 'section',
+            text: {
+              type: 'mrkdwn',
+              text: 'You currently have no rotas in your workspace. Try `@Rota help` for to see a list of possible commands.',
+            }
+          }
+        ]
+      });
+    } else {
+      await say({
+        blocks: [
+          {
+            type: 'section',
+            text: {
+              type: 'mrkdwn',
+              text: '*Rotas in your workspace*',
+            },
           },
-        },
-        {
-          type: 'section',
-          text: {
-            type: 'mrkdwn',
-            text: string,
+          {
+            type: 'section',
+            text: {
+              type: 'mrkdwn',
+              text: string,
+            },
           },
-        },
-        {
-          type: 'divider',
-        },
-        {
-          type: 'section',
-          text: {
-            type: 'mrkdwn',
-            text: 'Try `@Rota help` for to see a list of possible commands',
+          {
+            type: 'divider',
           },
-        },
-      ],
-    });
+          {
+            type: 'section',
+            text: {
+              type: 'mrkdwn',
+              text: 'Try `@Rota help` for to see a list of possible commands',
+            },
+          }
+        ]
+      });
+    }
   } catch (error) {
     await say(error.message);
   }
