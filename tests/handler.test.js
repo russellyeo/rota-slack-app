@@ -11,7 +11,7 @@ jest.mock('../networking/api_service', () => ({
     createRota: jest.fn().mockResolvedValue(
       { name: 'coffee', description: 'whose turn is it to make coffee?' },
     ),
-    deleteRota: jest.fn().mockResolvedValue({}),
+    deleteRota: jest.fn().mockResolvedValue(undefined),
   })),
 }));
 

@@ -62,14 +62,15 @@ describe('APIService', () => {
   describe('deleteRota', () => {
     it('should delete an existing rota', async () => {
       // GIVEN deleteRota will succeed
-      global.fetch = jest.fn(() => Promise.resolve({
-        ok: true,
-        json: () => Promise.resolve({ message: 'Rota deleted successfully' }),
-      }));
+      global.fetch = jest.fn(() => Promise.resolve({ ok: true }));
       // WHEN we delete the rota
       const result = await apiService.deleteRota('retrospective');
       // THEN the rota is deleted
-      expect(result).toEqual({ message: 'Rota deleted successfully' });
+      expect(result).toBeUndefined();
+      expect(global.fetch).toHaveBeenCalledWith(
+        "https://example.com/api/rotas/retrospective",
+        { "headers": { "Content-Type": "application/json" }, "method": "DELETE" }
+      );
     });
 
     it('should throw an error if the request fails', async () => {
@@ -78,7 +79,7 @@ describe('APIService', () => {
       // WHEN we attempt to delete the rota
       const result = apiService.deleteRota('retrospective');
       // THEN an error is thrown
-      await expect(result).rejects.toThrowError('Could not delete rota retrospective');
+      await expect(result).rejects.toThrowError('Could not delete rota `retrospective`');
     });
   });
 });

@@ -38,8 +38,7 @@ class APIService {
     if (!response.ok) {
       throw new Error(`Could not delete rota \`${name}\``);
     }
-    const responseData = await response.json();
-    return responseData;
+    return undefined;
   }
 }
 
