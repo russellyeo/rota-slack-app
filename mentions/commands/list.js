@@ -1,14 +1,3 @@
-function buildMarkdownList(rotas) {
-  const lines = rotas.map((rota) => {
-    let line = `\`${rota.name}\` - `;
-    if (rota.description) {
-      line += `${rota.description}`;
-    }
-    return line;
-  });
-  return lines.join('\n');
-}
-
 /*
   List
   @Rota list
@@ -16,7 +5,6 @@ function buildMarkdownList(rotas) {
 async function listRotas(service, say) {
   try {
     const rotas = await service.getRotas();
-    const string = buildMarkdownList(rotas);
 
     if (rotas.length === 0) {
       await say({
@@ -31,6 +19,11 @@ async function listRotas(service, say) {
         ]
       });
     } else {
+      const list = rotas.map((rota) => {
+        const description = rota.description ? ` - ${rota.description}` : '';
+        return `\`${rota.name}\`${description}`;
+      }).join('\n');
+
       await say({
         blocks: [
           {
@@ -44,7 +37,7 @@ async function listRotas(service, say) {
             type: 'section',
             text: {
               type: 'mrkdwn',
-              text: string,
+              text: list,
             },
           },
           {

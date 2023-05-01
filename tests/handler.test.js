@@ -28,9 +28,37 @@ describe('app_mentions handler', () => {
     const input = 'list';
     await handler.handle(input, mockAPIService, mockSay);
     expect(mockAPIService.getRotas).toHaveBeenCalledTimes(1);
+    expect(mockSay).toHaveBeenCalledWith({
+      blocks: [
+        {
+          type: 'section',
+          text: {
+            type: 'mrkdwn',
+            text: '*Rotas in your workspace*',
+          },
+        },
+        {
+          type: 'section',
+          text: {
+            type: 'mrkdwn',
+            text: "`standup` - daily check-in\n`retrospective` - reflect on the past month",
+          },
+        },
+        {
+          type: 'divider',
+        },
+        {
+          type: 'section',
+          text: {
+            type: 'mrkdwn',
+            text: 'Try `@Rota help` for to see a list of possible commands',
+          },
+        }
+      ]
+    });
   });
 
-  it('should create a new rota', async () => {
+  it('should create a new rota with a name and description', async () => {
     const input = 'create "standup" "daily standup"';
     await handler.handle(input, mockAPIService, mockSay);
     expect(mockAPIService.createRota).toHaveBeenCalledWith('standup', 'daily standup');
@@ -40,17 +68,45 @@ describe('app_mentions handler', () => {
           type: 'section',
           text: {
             type: 'mrkdwn',
-            text: `Successfully created \`standup\` rota`
+            text: "Successfully created `standup` rota",
           }
         }
       ]
     });
   });
 
-  it('should deleta a rota', async () => {
+  it('should create a new rota with just a name', async () => {
+    const input = 'create "standup"';
+    await handler.handle(input, mockAPIService, mockSay);
+    expect(mockAPIService.createRota).toHaveBeenCalledWith('standup', undefined);
+    expect(mockSay).toHaveBeenCalledWith({
+      blocks: [
+        {
+          type: 'section',
+          text: {
+            type: 'mrkdwn',
+            text: "Successfully created `standup` rota",
+          }
+        }
+      ]
+    });
+  });
+
+  it('should delete a a rota', async () => {
     const input = 'delete "standup"';
     await handler.handle(input, mockAPIService, mockSay);
     expect(mockAPIService.deleteRota).toHaveBeenCalledWith('standup');
+    expect(mockSay).toHaveBeenCalledWith({
+      blocks: [
+        {
+          type: 'section',
+          text: {
+            type: 'mrkdwn',
+            text: "Successfully deleted `standup` rota",
+          }
+        }
+      ]
+    });
   });
 
   it('should handle an unknown command', async () => {

@@ -30,7 +30,7 @@ const handle = async (text, service, say) => {
       },
       handler: (argv) => {
         const name = removeQuotes(argv.name);
-        const description = removeQuotes(argv.description);
+        const description = argv.description ? removeQuotes(argv.description) : undefined;
         executeCreate(name, description, service, say);
       },
     })

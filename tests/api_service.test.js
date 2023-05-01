@@ -37,7 +37,7 @@ describe('APIService', () => {
   });
 
   describe('createRota', () => {
-    it('should create a new rota', async () => {
+    it('should create a new rota with a name and a description', async () => {
       // GIVEN createRota will succeed and return the created rota
       global.fetch = jest.fn(() => Promise.resolve({
         ok: true,
@@ -47,6 +47,18 @@ describe('APIService', () => {
       const result = await apiService.createRota('coffee', 'whose turn is it to make coffee?');
       // THEN the rota is successfully created
       expect(result).toEqual({ name: 'coffee', description: 'whose turn is it to make coffee?' });
+    });
+
+    it('should create a new rota with just a name', async () => {
+      // GIVEN createRota will succeed and return the created rota
+      global.fetch = jest.fn(() => Promise.resolve({
+        ok: true,
+        json: () => Promise.resolve({ name: 'coffee' }),
+      }));
+      // WHEN we create a new rota
+      const result = await apiService.createRota('coffee', undefined);
+      // THEN the rota is successfully created
+      expect(result).toEqual({ name: 'coffee' });
     });
 
     it('should throw an error if the request fails', async () => {
