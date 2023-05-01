@@ -34,6 +34,17 @@ describe('app_mentions handler', () => {
     const input = 'create "standup" "daily standup"';
     await handler.handle(input, mockAPIService, mockSay);
     expect(mockAPIService.createRota).toHaveBeenCalledWith('standup', 'daily standup');
+    expect(mockSay).toHaveBeenCalledWith({
+      blocks: [
+        {
+          type: 'section',
+          text: {
+            type: 'mrkdwn',
+            text: `Successfully created \`standup\` rota`
+          }
+        }
+      ]
+    });
   });
 
   it('should deleta a rota', async () => {
