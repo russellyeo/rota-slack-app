@@ -2,7 +2,7 @@
   List
   @Rota list
 */
-async function listRotas(service, say) {
+module.exports = async (service, say) => {
   try {
     const rotas = await service.getRotas();
 
@@ -56,6 +56,4 @@ async function listRotas(service, say) {
   } catch (error) {
     await say(error.message);
   }
-}
-
-module.exports = listRotas;
+};
