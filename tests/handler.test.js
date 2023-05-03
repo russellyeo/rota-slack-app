@@ -12,6 +12,7 @@ jest.mock('../networking/api_service', () => ({
       { name: 'coffee', description: 'whose turn is it to make coffee?' },
     ),
     deleteRota: jest.fn().mockResolvedValue(undefined),
+    addUsersToRota: jest.fn().mockResolvedValue(undefined),
   })),
 }));
 
@@ -121,4 +122,12 @@ describe('app_mentions handler', () => {
     expect(mockSay).toHaveBeenCalledTimes(1);
     expect(mockSay).toHaveBeenCalledWith('unknown command');
   });
+
+  it("should add users to a rota", async () => {
+    const input = 'add standup @Sara @Yusef';
+    await handler.handle(input, mockAPIService, mockSay);
+    expect(mockAPIService.addUsersToRota).toHaveBeenCalledWith('standup', ['@Sara', '@Yusef']);
+    expect(mockSay).toHaveBeenCalledTimes(1);
+  });
+
 });

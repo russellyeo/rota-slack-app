@@ -40,6 +40,22 @@ class APIService {
     }
     return undefined;
   }
+
+  async addUsersToRota(name, users) {
+    const response = await fetch(`${this.baseURL}/api/rotas/${name}`, {
+      method: 'PATCH',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ users })
+    });
+    if (!response.ok) {
+      const error = await response.json();
+      throw new Error(`Could not assign users to rota \`${name}\`. ${error.message}`);
+    }
+    return undefined;
+  }
+
 }
 
 module.exports = { APIService };

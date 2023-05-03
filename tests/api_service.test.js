@@ -94,4 +94,37 @@ describe('APIService', () => {
       await expect(result).rejects.toThrowError('Could not delete rota `retrospective`');
     });
   });
+
+  describe('addUsersToRota', () => {
+    it('should update an existing rota', async () => {
+      // GIVEN addUsersToRota will succeed
+      global.fetch = jest.fn(() => Promise.resolve({ ok: true }));
+      // WHEN we assign users to an existing rota
+      const result = await apiService.addUsersToRota('standup', ['@Yasmin', '@Florian'])
+      // THEN the rota is updated
+      expect(result).toBeUndefined();
+      expect(global.fetch).toHaveBeenCalledWith(
+        "https://example.com/api/rotas/standup",
+        {
+          "headers": { "Content-Type": "application/json" },
+          "method": "PATCH",
+          "body": JSON.stringify({ "users": ["@Yasmin", "@Florian"] })
+        }
+      );
+    });
+
+    it('should throw an error if the request fails', async () => {
+      // GIVEN addUsersToRota will fail
+      global.fetch = jest.fn(() => Promise.resolve({
+        ok: false,
+        json: () => Promise.resolve({ message: "rota with id standup not found" })
+      }));
+      // WHEN we attempt to update the rota
+      // THEN an error is thrown
+      await expect(apiService.addUsersToRota('standup', ['@Yasmin', '@Florian']))
+        .rejects
+        .toThrowError("Could not assign users to rota `standup`. rota with id standup not found");
+    });
+
+  });
 });

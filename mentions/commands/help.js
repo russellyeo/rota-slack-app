@@ -4,7 +4,6 @@
 */
 module.exports = async (say) => {
   try {
-    console.log("[TEST] SAY");
     await say(
       {
         "blocks": [
@@ -34,6 +33,13 @@ module.exports = async (say) => {
             "text": {
               "type": "mrkdwn",
               "text": ":clipboard: `@Rota list` *display a list* of all rotas."
+            }
+          },
+          {
+            "type": "section",
+            "text": {
+              "type": "mrkdwn",
+              "text": ":busts_in_silhouette: `@Rota add [rota-name] [user1, user2, user3]` *assign users to a rota*."
             }
           }
         ]

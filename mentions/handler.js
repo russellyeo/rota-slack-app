@@ -1,5 +1,6 @@
 const parser = require('yargs');
 
+const executeAdd = require('./commands/add');
 const executeCreate = require('./commands/create');
 const executeDelete = require('./commands/delete');
 const executeHelp = require('./commands/help');
@@ -10,7 +11,6 @@ function removeQuotes(string) {
 }
 
 const handle = async (text, service, say) => {
-  console.log("[TEST] HANDLE");
   parser
     .command({
       command: 'list',
@@ -21,7 +21,6 @@ const handle = async (text, service, say) => {
     .command({
       command: 'help',
       handler: () => {
-        console.log("[TEST] HELP");
         executeHelp(say);
       }
     })
@@ -54,6 +53,23 @@ const handle = async (text, service, say) => {
       handler: (argv) => {
         const name = removeQuotes(argv.name);
         executeDelete(name, service, say);
+      }
+    })
+    .command({
+      command: 'add <name> [users...]',
+      builder: (yargs) => {
+        yargs.positional('name', {
+          type: 'string',
+          describe: 'the name of the rota to add users to',
+        });
+        yargs.option('users', {
+          type: 'string',
+          describe: 'the users to add',
+        });
+      },
+      handler: (argv) => {
+        const name = removeQuotes(argv.name);
+        executeAdd(name, argv.users, service, say);
       }
     })
     .command({
