@@ -66,6 +66,9 @@ class APIService {
   }
 
   async addUsersToRota(name, users) {
+    if (users.length === 0) {
+      throw new Error("Users must be non-empty");
+    }
     const response = await fetch(`${this.baseURL}/api/rotas/${name}`, {
       method: 'PATCH',
       headers: {

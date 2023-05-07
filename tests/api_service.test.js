@@ -163,5 +163,11 @@ describe('APIService', () => {
         .toThrowError("Could not assign users to rota `standup`. rota with id standup not found");
     });
 
+    it('should throw an error if the users array is empty', async () => {
+      await expect(apiService.addUsersToRota('standup', []))
+        .rejects
+        .toThrowError("Users must be non-empty");
+    });
+
   });
 });
