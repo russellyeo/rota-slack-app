@@ -1,6 +1,6 @@
 /*
   Delete
-  @Rota delete "[rotation-name]"
+  @Rota delete [rotation-name]
 */
 module.exports = async (name, service, say) => {
   try {

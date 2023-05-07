@@ -1,6 +1,6 @@
 /*
   Create
-  @Rota create "[rotation-name]" "[optional description]"
+  @Rota create [rotation-name] "[optional description]"
 */
 module.exports = async (name, description, service, say) => {
   try {

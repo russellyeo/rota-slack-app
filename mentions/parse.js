@@ -6,12 +6,10 @@ const executeDelete = require('./commands/delete');
 const executeHelp = require('./commands/help');
 const executeList = require('./commands/list');
 
-function removeQuotes(string) {
-  return string.replace(/"+/g, '');
-}
+module.exports = async (text, service, say) => {
+  const removeQuotes = (string) => string.replace(/"+/g, '');
 
-const handle = async (text, service, say) => {
-  parser
+  return parser
     .command({
       command: 'list',
       handler: () => {
@@ -33,13 +31,12 @@ const handle = async (text, service, say) => {
         });
         yargs.option('description', {
           type: 'string',
-          describe: 'an optional description of the rota',
+          describe: 'an optional description of the rota'
         });
       },
       handler: (argv) => {
-        const name = removeQuotes(argv.name);
         const description = argv.description ? removeQuotes(argv.description) : undefined;
-        executeCreate(name, description, service, say);
+        executeCreate(argv.name, description, service, say);
       }
     })
     .command({
@@ -51,8 +48,7 @@ const handle = async (text, service, say) => {
         });
       },
       handler: (argv) => {
-        const name = removeQuotes(argv.name);
-        executeDelete(name, service, say);
+        executeDelete(argv.name, service, say);
       }
     })
     .command({
@@ -68,8 +64,7 @@ const handle = async (text, service, say) => {
         });
       },
       handler: (argv) => {
-        const name = removeQuotes(argv.name);
-        executeAdd(name, argv.users, service, say);
+        executeAdd(argv.name, argv.users, service, say);
       }
     })
     .command({
@@ -82,4 +77,4 @@ const handle = async (text, service, say) => {
     .parse(text);
 };
 
-module.exports = { handle };
+

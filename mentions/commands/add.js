@@ -1,5 +1,5 @@
 /*
-  Assign
+  Add
   @Rota add [rota-name] [@user1 @user2 @user3]
 */
 module.exports = async (name, users, service, say) => {

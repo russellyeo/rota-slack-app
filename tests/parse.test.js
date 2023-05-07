@@ -1,4 +1,4 @@
-const handler = require('../mentions/handler');
+const parse = require('../mentions/parse');
 const { APIService } = require('../networking/api_service');
 
 // Mock APIService return values
@@ -16,7 +16,7 @@ jest.mock('../networking/api_service', () => ({
   })),
 }));
 
-describe('app_mentions handler', () => {
+describe('app_mentions parsing', () => {
   let mockAPIService;
   let mockSay;
 
@@ -27,7 +27,7 @@ describe('app_mentions handler', () => {
 
   it('should list rotas', async () => {
     const input = 'list';
-    await handler.handle(input, mockAPIService, mockSay);
+    await parse(input, mockAPIService, mockSay);
     expect(mockAPIService.getRotas).toHaveBeenCalledTimes(1);
     expect(mockSay).toHaveBeenCalledWith({
       blocks: [
@@ -61,13 +61,13 @@ describe('app_mentions handler', () => {
 
   it('should list available commands when asked for help', async () => {
     const input = 'help';
-    await handler.handle(input, mockAPIService, mockSay);
+    await parse(input, mockAPIService, mockSay);
     expect(mockSay).toHaveBeenCalledTimes(1);
   });
 
   it('should create a new rota with a name and description', async () => {
-    const input = 'create "standup" "daily standup"';
-    await handler.handle(input, mockAPIService, mockSay);
+    const input = 'create standup "daily standup"';
+    await parse(input, mockAPIService, mockSay);
     expect(mockAPIService.createRota).toHaveBeenCalledWith('standup', 'daily standup');
     expect(mockSay).toHaveBeenCalledWith({
       blocks: [
@@ -83,8 +83,8 @@ describe('app_mentions handler', () => {
   });
 
   it('should create a new rota with just a name', async () => {
-    const input = 'create "standup"';
-    await handler.handle(input, mockAPIService, mockSay);
+    const input = 'create standup';
+    await parse(input, mockAPIService, mockSay);
     expect(mockAPIService.createRota).toHaveBeenCalledWith('standup', undefined);
     expect(mockSay).toHaveBeenCalledWith({
       blocks: [
@@ -100,8 +100,8 @@ describe('app_mentions handler', () => {
   });
 
   it('should delete a a rota', async () => {
-    const input = 'delete "standup"';
-    await handler.handle(input, mockAPIService, mockSay);
+    const input = 'delete standup';
+    await parse(input, mockAPIService, mockSay);
     expect(mockAPIService.deleteRota).toHaveBeenCalledWith('standup');
     expect(mockSay).toHaveBeenCalledWith({
       blocks: [
@@ -118,14 +118,14 @@ describe('app_mentions handler', () => {
 
   it('should handle an unknown command', async () => {
     const input = 'unknown command';
-    await handler.handle(input, mockAPIService, mockSay);
+    await parse(input, mockAPIService, mockSay);
     expect(mockSay).toHaveBeenCalledTimes(1);
     expect(mockSay).toHaveBeenCalledWith('unknown command');
   });
 
   it("should add users to a rota", async () => {
     const input = 'add standup @Sara @Yusef';
-    await handler.handle(input, mockAPIService, mockSay);
+    await parse(input, mockAPIService, mockSay);
     expect(mockAPIService.addUsersToRota).toHaveBeenCalledWith('standup', ['@Sara', '@Yusef']);
     expect(mockSay).toHaveBeenCalledTimes(1);
   });
