@@ -6,8 +6,8 @@ module.exports = async (name, service, say) => {
   try {
     const rota = await service.getRota(name);
 
-    const assignedInfo = (rota.assigned) ? `Assigned: ${rota.assigned}` : 'No assigned user'
-    const usersInfo = (rota.users.length > 0) ? rota.users : 'No users in rota'
+    const assignedInfo = (rota.assigned) ? `Assigned: \`${rota.assigned}\`` : 'No assigned user'
+    const usersInfo = (rota.users.length > 0) ? rota.users.map(x => `\`${x}\``) : 'No users in rota'
 
     await say({
       blocks: [
@@ -35,7 +35,6 @@ module.exports = async (name, service, say) => {
       ]
     });
   } catch (error) {
-    console.log('[LOG]', error)
     await say(error.message);
   }
 };
