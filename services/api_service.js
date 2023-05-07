@@ -69,8 +69,8 @@ class APIService {
     if (users.length === 0) {
       throw new Error("Users must be non-empty");
     }
-    const response = await fetch(`${this.baseURL}/api/rotas/${name}`, {
-      method: 'PATCH',
+    const response = await fetch(`${this.baseURL}/api/rotas/${name}/users`, {
+      method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },

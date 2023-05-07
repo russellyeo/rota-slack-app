@@ -141,10 +141,10 @@ describe('APIService', () => {
       // THEN the rota is updated
       expect(result).toBeUndefined();
       expect(global.fetch).toHaveBeenCalledWith(
-        "https://example.com/api/rotas/standup",
+        "https://example.com/api/rotas/standup/users",
         {
           "headers": { "Content-Type": "application/json" },
-          "method": "PATCH",
+          "method": "POST",
           "body": JSON.stringify({ "users": ["@Yasmin", "@Florian"] })
         }
       );
