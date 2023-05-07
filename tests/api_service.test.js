@@ -1,10 +1,15 @@
-const { APIService } = require('../networking/api_service');
+const { APIService } = require('../services/api_service');
+const { Rota, RotaDescription } = require('../models/rota');
 
 describe('APIService', () => {
   let apiService;
 
   beforeEach(() => {
     apiService = new APIService({ baseURL: 'https://example.com' });
+  });
+
+  afterEach(() => {
+    jest.restoreAllMocks();
   });
 
   describe('getRotas', () => {
@@ -33,6 +38,38 @@ describe('APIService', () => {
       const result = apiService.getRotas();
       // THEN an error is thrown
       await expect(result).rejects.toThrowError('Could not retrieve rotas');
+    });
+  });
+
+  describe('getRota', () => {
+    beforeEach(() => {
+      jest.spyOn(global, 'fetch').mockResolvedValue({
+        ok: true,
+        json: () => Promise.resolve({
+          rota: { name: 'standup', description: 'daily check-in' },
+          assigned: '@Yusuf',
+          users: ['@Yusuf', '@Helena']
+        })
+      });
+    });
+
+    it('should return a Rota object with the correct properties', async () => {
+      const rota = await apiService.getRota('standup');
+      expect(rota.rota).toBeInstanceOf(RotaDescription);
+      expect(rota.rota.name).toBe('standup');
+      expect(rota.rota.description).toBe('daily check-in');
+      expect(rota.assigned).toBe('@Yusuf');
+      expect(rota.users).toEqual(['@Yusuf', '@Helena']);
+    });
+
+    it('should throw an error if the request fails', async () => {
+      global.fetch.mockResolvedValueOnce({ ok: false });
+      await expect(apiService.getRota('standup')).rejects.toThrow('Could not retrieve rota');
+    });
+
+    it('should throw an error if the response is not valid JSON', async () => {
+      global.fetch.mockResolvedValueOnce({ ok: true, json: () => Promise.reject() });
+      await expect(apiService.getRota('standup')).rejects.toThrow('Could not parse response');
     });
   });
 

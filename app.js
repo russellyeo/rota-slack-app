@@ -1,7 +1,7 @@
 const { App, LogLevel } = require('@slack/bolt');
 const { config } = require('dotenv');
 const mentions = require('./mentions');
-const { APIService } = require('./networking/api_service');
+const { APIService } = require('./services/api_service');
 
 /** Configure Environment Variables */
 config();

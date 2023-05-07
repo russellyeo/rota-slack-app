@@ -1,15 +1,16 @@
-const parser = require('yargs');
+const yargs = require('yargs');
 
 const executeAdd = require('./commands/add');
 const executeCreate = require('./commands/create');
 const executeDelete = require('./commands/delete');
 const executeHelp = require('./commands/help');
 const executeList = require('./commands/list');
+const executeShow = require('./commands/show');
 
 module.exports = async (text, service, say) => {
   const removeQuotes = (string) => string.replace(/"+/g, '');
 
-  return parser
+  const parser = yargs
     .command({
       command: 'list',
       handler: () => {
@@ -68,13 +69,31 @@ module.exports = async (text, service, say) => {
       }
     })
     .command({
+      command: 'show <name>',
+      builder: (yargs) => {
+        yargs.positional('name', {
+          type: 'string',
+          describe: 'the name of the rota to show',
+        });
+      },
+      handler: (argv) => {
+        executeShow(argv.name, service, say);
+      }
+    })
+    .command({
       command: '*',
       handler: () => {
-        say('unknown command');
+        throw new Error('Unknown command')
       }
     })
     .help(false)
-    .parse(text);
+    .fail(false)
+
+  try {
+    await parser.parse(text);
+  } catch (error) {
+    say("🤔 I'm sorry, I didn't understand that. Please try rephrasing your question or enter `@Rota help` to see a list of available commands.");
+  }
 };
 
 
