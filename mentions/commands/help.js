@@ -46,7 +46,14 @@ module.exports = async (say) => {
             "type": "section",
             "text": {
               "type": "mrkdwn",
-              "text": ":busts_in_silhouette:  `@Rota add [rota-name] [user1 user2 user3]` *assign users to a rota*."
+              "text": ":busts_in_silhouette:  `@Rota add [rota-name] [user1 user2 user3]` *add users to a rota*."
+            }
+          },
+          {
+            "type": "section",
+            "text": {
+              "type": "mrkdwn",
+              "text": ":woman-raising-hand:  `@Rota assign [user] [rota]` *assign user to rota*."
             }
           }
         ]

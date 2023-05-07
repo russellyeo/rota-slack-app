@@ -168,6 +168,33 @@ describe('APIService', () => {
         .rejects
         .toThrowError("Users must be non-empty");
     });
-
   });
+
+  describe('assignUserToRota', () => {
+    it('should assign a user to a rota', async () => {
+      global.fetch = jest.fn(() => Promise.resolve({ ok: true }));
+      const result = await apiService.assignUserToRota('@Russell', 'standup')
+      expect(result).toBeUndefined();
+      expect(global.fetch).toHaveBeenCalledWith(
+        "https://example.com/api/rotas/standup",
+        {
+          "headers": { "Content-Type": "application/json" },
+          "method": "PATCH",
+          "body": { "assigned": "@Russell" },
+        }
+      );
+    });
+
+    it('should throw an error if the response is not successful', async () => {
+      global.fetch = jest.fn(() => Promise.resolve({
+        ok: false,
+        json: () => Promise.resolve({ message: "Failed to assign user to rota" })
+      }));
+      await expect(apiService.assignUserToRota('@Russell', 'standup')).rejects.toThrow(
+        'Could not assign user to rota. Failed to assign user to rota'
+      );
+    });
+  });
+
+
 });

@@ -128,6 +128,12 @@ describe('app_mentions parsing', () => {
     expect(mockSay).toHaveBeenCalledTimes(1);
   });
 
+  it('should assign a user to a rota', async () => {
+    const input = 'assign @Russell standup';
+    await parse(input, mockAPIService, mockSay);
+    expect(mockSay).toHaveBeenCalledTimes(1);
+  });
+
   describe('show', () => {
     it("should show a rota", async () => {
       const input = 'show standup';

@@ -83,6 +83,21 @@ class APIService {
     return undefined;
   }
 
+  async assignUserToRota(user, rota) {
+    const response = await fetch(`${this.baseURL}/api/rotas/${rota}`, {
+      method: 'PATCH',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: { assigned: user }
+    });
+    if (!response.ok) {
+      const error = await response.json();
+      throw new Error(`Could not assign user to rota. ${error.message}`);
+    }
+    return undefined;
+  }
+
 }
 
 module.exports = { APIService };

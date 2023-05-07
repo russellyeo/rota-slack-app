@@ -1,6 +1,7 @@
 const yargs = require('yargs');
 
 const executeAdd = require('./commands/add');
+const executeAssign = require('./commands/assign');
 const executeCreate = require('./commands/create');
 const executeDelete = require('./commands/delete');
 const executeHelp = require('./commands/help');
@@ -26,14 +27,8 @@ module.exports = async (text, service, say) => {
     .command({
       command: 'create <name> [description]',
       builder: (yargs) => {
-        yargs.positional('name', {
-          type: 'string',
-          describe: 'the name of the rota to create',
-        });
-        yargs.option('description', {
-          type: 'string',
-          describe: 'an optional description of the rota'
-        });
+        yargs.positional('name', { type: 'string' });
+        yargs.option('description', { type: 'string' });
       },
       handler: (argv) => {
         const description = argv.description ? removeQuotes(argv.description) : undefined;
@@ -43,10 +38,7 @@ module.exports = async (text, service, say) => {
     .command({
       command: 'delete <name>',
       builder: (yargs) => {
-        yargs.positional('name', {
-          type: 'string',
-          describe: 'the name of the rota to delete',
-        });
+        yargs.positional('name', { type: 'string' });
       },
       handler: (argv) => {
         executeDelete(argv.name, service, say);
@@ -55,14 +47,8 @@ module.exports = async (text, service, say) => {
     .command({
       command: 'add <name> [users...]',
       builder: (yargs) => {
-        yargs.positional('name', {
-          type: 'string',
-          describe: 'the name of the rota to add users to',
-        });
-        yargs.option('users', {
-          type: 'string',
-          describe: 'the users to add',
-        });
+        yargs.positional('name', { type: 'string' });
+        yargs.option('users', { type: 'string' });
       },
       handler: (argv) => {
         executeAdd(argv.name, argv.users, service, say);
@@ -71,13 +57,20 @@ module.exports = async (text, service, say) => {
     .command({
       command: 'show <name>',
       builder: (yargs) => {
-        yargs.positional('name', {
-          type: 'string',
-          describe: 'the name of the rota to show',
-        });
+        yargs.positional('name', { type: 'string' });
       },
       handler: (argv) => {
         executeShow(argv.name, service, say);
+      }
+    })
+    .command({
+      command: 'assign <user> <rota>',
+      builder: (yargs) => {
+        yargs.positional('user', { type: 'string' });
+        yargs.positional('rota', { type: 'string' });
+      },
+      handler: (argv) => {
+        executeAssign(argv.user, argv.rota, service, say);
       }
     })
     .command({
