@@ -20,8 +20,8 @@ describe('clean', () => {
   });
 
   test('clean reminder', async () => {
-    const input = 'Reminder: @Rota "Standup" who.';
+    const input = 'Reminder: <@U04NTE95SLS> @Rota standup who.';
     const result = await utils.clean(input);
-    expect(result).toEqual('@Rota "Standup" who.');
+    expect(result).toEqual('@Rota standup who');
   });
 });

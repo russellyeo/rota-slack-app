@@ -6,7 +6,8 @@
 function clean(input) {
   return input
     .replace(/^<@U\w+>/, '')
-    .replace('Reminder: ', '')
+    .replace(/^Reminder: <@U\w+>/, '')
+    .replace(/\.$/, '')
     .replace(/“/g, '"')
     .replace(/”/g, '"')
     .replace(/’/g, '\'')
