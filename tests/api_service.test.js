@@ -1,6 +1,7 @@
 const { APIService } = require('../services/api_service');
 const { Rota, RotaDescription } = require('../models/rota');
 const { User } = require('../models/user');
+const { RotaWithUsers } = require('../models/rota-with-users');
 
 describe('APIService', () => {
   let apiService;
@@ -225,6 +226,34 @@ describe('APIService', () => {
         }
       );
       expect(result).toBeUndefined();
+    });
+  });
+
+  describe('rotateRota', () => {
+    it('should rotate a rota', async () => {
+      global.fetch = jest.fn(() => Promise.resolve({
+        ok: true,
+        json: () => Promise.resolve({
+          rota: { name: "standup", description: "daily check-in" },
+          assigned: "@Helena",
+          users: ["@Yusuf", "@Helena"],
+        }),
+      }));
+
+      const result = await apiService.rotateRota('standup');
+
+      expect(global.fetch).toHaveBeenCalledWith(
+        "https://example.com/api/rotas/standup/rotate",
+        {
+          headers: { "Content-Type": "application/json" },
+          method: "GET"
+        }
+      );
+      expect(result).toStrictEqual(new RotaWithUsers(
+        new RotaDescription("standup", "daily check-in"),
+        "@Helena",
+        ["@Yusuf", "@Helena"]
+      ));
     });
   });
 

@@ -1,4 +1,5 @@
 const { Rota, RotaDescription } = require('../models/rota');
+const { RotaWithUsers } = require('../models/rota-with-users');
 const { User } = require('../models/user');
 
 class APIService {
@@ -112,6 +113,30 @@ class APIService {
       throw new Error(`Error: ${error.message}`);
     }
     return undefined;
+  }
+
+  /**
+  * Rotate a rota, updating the assigned user.
+  * @param {string} rota - The name of the rota to rotate.
+  * @returns {Promise<RotaWithUsers>} The updated rota.
+  * @throws {Error} If the request fails or the response is not valid JSON.
+  */
+  async rotateRota(rota) {
+    const response = await fetch(`${this.baseURL}/api/rotas/${rota}/rotate`, {
+      method: 'GET',
+      headers: { 'Content-Type': 'application/json' }
+    });
+    if (!response.ok) {
+      const error = await response.json();
+      throw new Error(`Error: ${error.message}`);
+    }
+    try {
+      const data = await response.json();
+      const rotaDescription = new RotaDescription(data.rota.name, data.rota.description);
+      return new RotaWithUsers(rotaDescription, data.assigned, data.users);
+    } catch {
+      throw new Error('Could not parse response');
+    }
   }
 
 }

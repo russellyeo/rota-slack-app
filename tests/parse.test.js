@@ -18,6 +18,11 @@ jest.mock('../services/api_service', () => ({
     ),
     deleteRota: jest.fn().mockResolvedValue(undefined),
     addUsersToRota: jest.fn().mockResolvedValue(undefined),
+    rotateRota: jest.fn().mockResolvedValue({
+      rota: { name: 'standup', description: 'daily check-in' },
+      assigned: '@Octavia',
+      users: ["@Yusuf", "@Octavia", "@Fatima"]
+    }),
   })),
 }));
 
@@ -141,6 +146,15 @@ describe('app_mentions parsing', () => {
     expect(mockAPIService.getRota).toHaveBeenCalledWith("standup")
     expect(mockSay).toHaveBeenCalledTimes(1);
     expect(mockSay).toHaveBeenCalledWith("@Yusuf");
+  });
+
+  it('should rotate a rota', async () => {
+    const input = 'rotate standup';
+    await parse(input, mockAPIService, mockSay);
+    expect(mockAPIService.rotateRota).toHaveBeenCalledTimes(1);
+    expect(mockAPIService.rotateRota).toHaveBeenCalledWith("standup")
+    expect(mockSay).toHaveBeenCalledTimes(1);
+    expect(mockSay).toHaveBeenCalledWith("`standup` was rotated. `@Octavia` is now the assigned user.");
   });
 
   describe('show', () => {

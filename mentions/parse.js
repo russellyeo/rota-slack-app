@@ -6,6 +6,7 @@ const executeCreate = require('./commands/create');
 const executeDelete = require('./commands/delete');
 const executeHelp = require('./commands/help');
 const executeList = require('./commands/list');
+const executeRotate = require('./commands/rotate');
 const executeShow = require('./commands/show');
 const executeWho = require('./commands/who');
 
@@ -81,6 +82,15 @@ module.exports = async (text, service, say) => {
       },
       handler: (argv) => {
         executeWho(argv.rota, service, say);
+      }
+    })
+    .command({
+      command: 'rotate <rota>',
+      builder: (yargs) => {
+        yargs.positional('rota', { type: 'string' });
+      },
+      handler: (argv) => {
+        executeRotate(argv.rota, service, say);
       }
     })
     .command({

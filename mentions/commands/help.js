@@ -60,6 +60,13 @@ module.exports = async (say) => {
             "type": "section",
             "text": {
               "type": "mrkdwn",
+              "text": ":arrows_counterclockwise:  `@Rota rotate [rota-name]` rotate a rota."
+            }
+          },
+          {
+            "type": "section",
+            "text": {
+              "type": "mrkdwn",
               "text": ":bell:  `@Rota who [rota-name]` who is assigned to a rota."
             }
           }
