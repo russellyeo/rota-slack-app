@@ -1,4 +1,5 @@
 const { Rota, RotaDescription } = require('../models/rota');
+const { User } = require('../models/user');
 
 class APIService {
   constructor({ baseURL }) {
@@ -83,17 +84,32 @@ class APIService {
     return undefined;
   }
 
-  async assignUserToRota(user, rota) {
-    const response = await fetch(`${this.baseURL}/api/rotas/${rota}`, {
-      method: 'PATCH',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: { assigned: user }
+  async getUserByName(name) {
+    const response = await fetch(`${this.baseURL}/api/users/by-name/${encodeURIComponent(name)}`, {
+      method: 'GET',
+      headers: { 'Content-Type': 'application/json' }
     });
     if (!response.ok) {
       const error = await response.json();
-      throw new Error(`Could not assign user to rota. ${error.message}`);
+      throw new Error(`Could not get user. ${error.message}`);
+    }
+    try {
+      const data = await response.json();
+      return new User(data.id, data.name);
+    } catch {
+      throw new Error('Could not parse response');
+    }
+  }
+
+  async updateRota(rota, assigned) {
+    const response = await fetch(`${this.baseURL}/api/rotas/${rota}`, {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ assigned }),
+    });
+    if (!response.ok) {
+      const error = await response.json();
+      throw new Error(`Error: ${error.message}`);
     }
     return undefined;
   }

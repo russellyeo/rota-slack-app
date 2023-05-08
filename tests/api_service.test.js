@@ -1,5 +1,6 @@
 const { APIService } = require('../services/api_service');
 const { Rota, RotaDescription } = require('../models/rota');
+const { User } = require('../models/user');
 
 describe('APIService', () => {
   let apiService;
@@ -170,31 +171,61 @@ describe('APIService', () => {
     });
   });
 
-  describe('assignUserToRota', () => {
-    it('should assign a user to a rota', async () => {
-      global.fetch = jest.fn(() => Promise.resolve({ ok: true }));
-      const result = await apiService.assignUserToRota('@Russell', 'standup')
-      expect(result).toBeUndefined();
+  describe('getUserByName', () => {
+    it('should get a user by name', async () => {
+      global.fetch = jest.fn(() => Promise.resolve({
+        ok: true,
+        json: () => Promise.resolve({ id: 1, name: "@Russell" }),
+      }));
+      const result = await apiService.getUserByName('@Russell');
+
       expect(global.fetch).toHaveBeenCalledWith(
-        "https://example.com/api/rotas/standup",
+        "https://example.com/api/users/by-name/%40Russell",
         {
           "headers": { "Content-Type": "application/json" },
-          "method": "PATCH",
-          "body": { "assigned": "@Russell" },
+          "method": "GET"
         }
       );
+      expect(result).toStrictEqual(new User(1, "@Russell"));
     });
 
-    it('should throw an error if the response is not successful', async () => {
+    it('should return not found if the user does not exist', async () => {
       global.fetch = jest.fn(() => Promise.resolve({
         ok: false,
-        json: () => Promise.resolve({ message: "Failed to assign user to rota" })
+        json: () => Promise.resolve({ message: 'User @Russell was not found' }),
       }));
-      await expect(apiService.assignUserToRota('@Russell', 'standup')).rejects.toThrow(
-        'Could not assign user to rota. Failed to assign user to rota'
+      const result = apiService.getUserByName('@Russell');
+
+      await expect(result).rejects.toThrowError('Could not get user. User @Russell was not found');
+
+      expect(global.fetch).toHaveBeenCalledWith(
+        "https://example.com/api/users/by-name/%40Russell",
+        {
+          "headers": { "Content-Type": "application/json" },
+          "method": "GET"
+        }
       );
     });
   });
 
+  describe('updateRota', () => {
+    it('should update a rota', async () => {
+      global.fetch = jest.fn(() => Promise.resolve({
+        ok: true,
+        json: () => Promise.resolve({ assigned: 1 }),
+      }));
+      const result = await apiService.updateRota('standup', 1);
+
+      expect(global.fetch).toHaveBeenCalledWith(
+        "https://example.com/api/rotas/standup",
+        {
+          headers: { "Content-Type": "application/json" },
+          method: "PATCH",
+          body: JSON.stringify({ "assigned": 1 })
+        }
+      );
+      expect(result).toBeUndefined();
+    });
+  });
 
 });

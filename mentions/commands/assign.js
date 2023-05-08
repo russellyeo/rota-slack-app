@@ -2,16 +2,17 @@
   Assign
   @Rota assign <user> <rota-name>
 */
-module.exports = async (user, rota, service, say) => {
+module.exports = async (userName, rota, service, say) => {
   try {
-    await service.assignUserToRota(user, rota);
+    const user = await service.getUserByName(userName);
+    await service.updateRota(rota, user.id);
     await say({
       blocks: [
         {
           type: 'section',
           text: {
             type: 'mrkdwn',
-            text: `Assigned \`${user}\` to \'${rota}\'`
+            text: `Assigned \`${user.name}\` to \`${rota}\``
           }
         }
       ]
