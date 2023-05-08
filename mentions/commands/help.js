@@ -69,6 +69,13 @@ module.exports = async (say) => {
               "type": "mrkdwn",
               "text": ":bell:  `@Rota who [rota-name]` who is assigned to a rota."
             }
+          },
+          {
+            "type": "section",
+            "text": {
+              "type": "mrkdwn",
+              "text": ":information_desk_person:  `@Rota help` show this list of commands."
+            }
           }
         ]
       }
