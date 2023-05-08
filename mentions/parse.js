@@ -7,6 +7,7 @@ const executeDelete = require('./commands/delete');
 const executeHelp = require('./commands/help');
 const executeList = require('./commands/list');
 const executeShow = require('./commands/show');
+const executeWho = require('./commands/who');
 
 module.exports = async (text, service, say) => {
   const removeQuotes = (string) => string.replace(/"+/g, '');
@@ -71,6 +72,15 @@ module.exports = async (text, service, say) => {
       },
       handler: (argv) => {
         executeAssign(argv.user, argv.rota, service, say);
+      }
+    })
+    .command({
+      command: 'who <rota>',
+      builder: (yargs) => {
+        yargs.positional('rota', { type: 'string' });
+      },
+      handler: (argv) => {
+        executeWho(argv.rota, service, say);
       }
     })
     .command({

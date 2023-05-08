@@ -134,6 +134,15 @@ describe('app_mentions parsing', () => {
     expect(mockSay).toHaveBeenCalledTimes(1);
   });
 
+  it('should return who is assigned to a rota', async () => {
+    const input = 'who standup';
+    await parse(input, mockAPIService, mockSay);
+    expect(mockAPIService.getRota).toHaveBeenCalledTimes(1);
+    expect(mockAPIService.getRota).toHaveBeenCalledWith("standup")
+    expect(mockSay).toHaveBeenCalledTimes(1);
+    expect(mockSay).toHaveBeenCalledWith("@Yusuf");
+  });
+
   describe('show', () => {
     it("should show a rota", async () => {
       const input = 'show standup';
