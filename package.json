@@ -1,26 +1,18 @@
 {
-  "name": "bolt-js-template",
+  "name": "rota-slack-app",
   "version": "1.0.0",
-  "description": "A scaffold template for Slack apps",
+  "description": "Manage a list of rotas in your workspace",
+  "author": "Russell Yeo",
+  "license": "MIT",
   "main": "app.js",
   "scripts": {
     "start": "node app.js",
     "lint": "eslint --ext .js .",
     "test": "jest"
   },
-  "author": "Slack Technologies, LLC",
-  "license": "MIT",
-  "keywords": [
-    "slack",
-    "bolt",
-    "slackapi"
-  ],
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/slackapi/bolt-js-template.git"
-  },
-  "bugs": {
-    "url": "https://github.com/slackapi/bolt-js-template/issues"
+  "engines": {
+    "node": ">=18.0.0",
+    "npm": ">=9.0.0"
   },
   "dependencies": {
     "@slack/bolt": "^3.11.3",
