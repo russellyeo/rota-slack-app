@@ -11,8 +11,8 @@
     "test": "jest"
   },
   "engines": {
-    "node": ">=17.5.0",
-    "npm": ">=9.0.0"
+    "node": ">=17.9.1",
+    "npm": ">=8.11.0"
   },
   "dependencies": {
     "@slack/bolt": "^3.11.3",
