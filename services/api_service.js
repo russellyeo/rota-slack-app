@@ -1,6 +1,7 @@
 const { Rota, RotaDescription } = require('../models/rota');
 const { RotaWithUsers } = require('../models/rota-with-users');
 const { User } = require('../models/user');
+const fetch = require("node-fetch");
 
 class APIService {
   constructor({ baseURL }) {
