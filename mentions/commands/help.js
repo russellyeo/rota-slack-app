@@ -39,7 +39,7 @@ module.exports = async (say) => {
             "type": "section",
             "text": {
               "type": "mrkdwn",
-              "text": ":eyes:  `@Rota show [rota-name]` show info about a rota"
+              "text": ":eyes:  `@Rota show [rota-name]` show info about a rota."
             }
           },
           {

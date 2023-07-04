@@ -1,80 +1,46 @@
-# Bolt for JavaScript Template App
+# @Rota Slack Bot
 
-This is a generic Bolt for JavaScript template app used to build out Slack apps.
+A slack bot that helps you to manage your team's rotas. For example, you could set up a daily reminder of who's turn it is to run standup. The bot uses slack [app mentions](https://api.slack.com/events/app_mention) so that it can be invoked from a slackbot reminder to schedule events.
 
-Before getting started, make sure you have a development workspace where you have permissions to install apps. If you don’t have one setup, go ahead and [create one](https://slack.com/create).
-## Installation
+```
+@Rota create my-team-standup
+@Rota add my-team-standup @user1 @user2 @user3
+@Rota assign @user1 my-team-standup
 
-#### Create a Slack App
-1. Open [https://api.slack.com/apps/new](https://api.slack.com/apps/new) and choose "From an app manifest"
-2. Choose the workspace you want to install the application to
-3. Copy the contents of [manifest.json](./manifest.json) into the text box that says `*Paste your manifest code here*` (within the JSON tab) and click *Next*
-4. Review the configuration and click *Create*
-5. Click *Install to Workspace* and *Allow* on the screen that follows. You'll then be redirected to the App Configuration dashboard.
+/remind #my-team-standup @Rota who my-team-standup every weekday at 9:20
+/remind #my-team-standup @Rota rotate my-team-standup every weekday at 9:45
+```
 
-#### Environment Variables
-Before you can run the app, you'll need to store some environment variables.
+## Commands
+- 🎨  `@Rota create [rota-name] "[optional rota description]"` create a new rota. `[rota-name]` can only contain lowercase letters, numbers, and hyphens. `"[optional rota description]"` must be enclosed in double quotes if given.
+- ⛔  `@Rota delete [rota-name]` delete a rota.
+- 📋  `@Rota list` display a list of all rotas.
+- 👀  `@Rota show [rota-name]` show info about a rota.
+- 👥  `@Rota add [rota-name] [user1 user2 user3]` add users to a rota.
+- 🙋‍♀️  `@Rota assign [user] [rota-name]` assign user to rota.
+- 🔄  `@Rota rotate [rota-name]` rotate a rota.
+- 🔔  `@Rota who [rota-name]` who is assigned to a rota.
+- 💁  `@Rota help` show this list of commands.
 
-1. Rename `.env.sample` to `.env`
-2. Open your apps configuration page from [this list](https://api.slack.com/apps), click *OAuth & Permissions* in the left hand menu, then copy the *Bot User OAuth Token* into your `.env` file under `SLACK_BOT_TOKEN`
-3. Click *Basic Information* from the left hand menu and follow the steps in the *App-Level Tokens* section to create an app-level token with the `connections:write` scope. Copy that token into your `.env` as `SLACK_APP_TOKEN`.
+## Implementation
+- The bot is written in JavaScript using the [bolt-js](https://github.com/slackapi/bolt-js) framework (and the [starter template](https://github.com/slack-samples/bolt-js-starter-template))
+- Uses the [Events API](https://api.slack.com/events-api) to receive events from Slack, via the `app_mention` event with `app_mentions:read` permissions.
+- Uses the [yargs](https://github.com/yargs/yargs-parser) parsing library to parse commands from the message text.
+- Makes outbound requests to a hosted scala API backed by a postgres DB to store and retrieve rota information. See [rota-api](https://github.com/RussellYeo/rota-api).
+- Uses the [Slack Web API](https://api.slack.com/web) to send messages, via the `say` function with `chat:write` permissions.
 
-### Setup Your Local Project
-```zsh
-# Clone this project onto your machine
-git clone https://github.com/slack-samples/bolt-js-starter-template.git
 
-# Change into this project directory
-cd bolt-js-starter-template
-
+## Development
+```shell
 # Install dependencies
 npm install
 
-# Run Bolt server
+# Run the app
 npm start
+
+# (optional) expose an ngrok tunnel to your local machine
+ngrok http 3000 --oauth github
 ```
 
-#### Linting
-```zsh
-# Run eslint for code formatting and linting
-npm run lint
-```
-
-## Project Structure
-
-### `manifest.json`
-
-`manifest.json` is a configuration for Slack apps. With a manifest, you can create an app with a pre-defined configuration, or adjust the configuration of an existing app.
-
-### `app.js`
-
-`app.js` is the entry point for the application and is the file you'll run to start the server. This project aims to keep this file as thin as possible, primarily using it as a way to route inbound requests.
-
-### `/listeners`
-
-Every incoming request is routed to a "listener". Inside this directory, we group each listener based on the Slack Platform feature used, so `/listeners/shortcuts` handles incoming [Shortcuts](https://api.slack.com/interactivity/shortcuts) requests, `/listeners/views` handles [View submissions](https://api.slack.com/reference/interaction-payloads/views#view_submission) and so on.
-
-
-## App Distribution / OAuth
-
-Only implement OAuth if you plan to distribute your application across multiple workspaces. A separate `app-oauth.js` file can be found with relevant OAuth settings.
-
-When using OAuth, Slack requires a public URL where it can send requests. In this template app, we've used [`ngrok`](https://ngrok.com/download). Checkout [this guide](https://ngrok.com/docs#getting-started-expose) for setting it up.
-
-Start `ngrok` to access the app on an external network and create a redirect URL for OAuth. 
-
-```
-ngrok http 3000
-```
-
-This output should include a forwarding address for `http` and `https` (we'll use `https`). It should look something like the following:
-
-```
-Forwarding   https://3cb89939.ngrok.io -> http://localhost:3000
-```
-
-Navigate to **OAuth & Permissions** in your app configuration and click **Add a Redirect URL**. The redirect URL should be set to your `ngrok` forwarding address with the `slack/oauth_redirect` path appended. For example:
-
-```
-https://3cb89939.ngrok.io/slack/oauth_redirect
-```
+## Notes
+- Authorization/authentication has not yet been implemented (both client-side and server-side), so the bot has not yet been published on the slack app store, and will currently only work in workspaces that have installed the app manually.
