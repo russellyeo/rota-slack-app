@@ -1,7 +1,8 @@
 const { Rota, RotaDescription } = require('../models/rota');
 const { RotaWithUsers } = require('../models/rota-with-users');
 const { User } = require('../models/user');
-const fetch = require("node-fetch");
+
+const axios = require("axios");
 
 class APIService {
   constructor({ baseURL }) {
@@ -14,13 +15,12 @@ class APIService {
    * @throws {Error} If the API request fails.
    */
   async getRotas() {
-    const url = `${this.baseURL}/api/rotas`;
-    const response = await fetch(url);
-    if (!response.ok) {
-      throw new Error('Could not retrieve rotas');
+    try {
+      const response = await axios.get(`${this.baseURL}/api/rotas`);
+      return response.data;
+    } catch (error) {
+      throw new Error(`Could not get rotas. Error: ${error.message}.`);
     }
-    const data = await response.json();
-    return data;
   }
 
   /**
@@ -30,18 +30,16 @@ class APIService {
   * @throws {Error} If the request fails or the response is not valid JSON.
   */
   async getRota(name) {
-    const url = `${this.baseURL}/api/rotas/${name}`;
-    const response = await fetch(url);
-    if (!response.ok) {
-      throw new Error('Could not retrieve rota');
-    }
     try {
-      const data = await response.json();
-      const rotaDescription = new RotaDescription(data.rota.name, data.rota.description);
-      const rota = new Rota(rotaDescription, data.assigned, data.users);
+      const response = await axios.get(`${this.baseURL}/api/rotas/${name}`);
+      const rotaDescription = new RotaDescription(
+        response.data.rota.name,
+        response.data.rota.description
+      );
+      const rota = new Rota(rotaDescription, response.data.assigned, response.data.users);
       return rota;
-    } catch {
-      throw new Error('Could not parse response');
+    } catch (error) {
+      throw new Error(`Could not get \`${name}\` rota. Error: ${error.message}.`);
     }
   }
 
@@ -53,18 +51,15 @@ class APIService {
     * @throws {Error} If the request fails or the response is not valid JSON.
     */
   async createRota(name, description) {
-    const response = await fetch(`${this.baseURL}/api/rotas`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ name, description }),
-    });
-    if (!response.ok) {
-      throw new Error(`Could not create rota \`${name}\``);
+    try {
+      const response = await axios.post(
+        `${this.baseURL}/api/rotas`,
+        JSON.stringify({ name, description })
+      );
+      return response.data;
+    } catch (error) {
+      throw new Error(`Could not create rota \`${name}\`. Error: ${error.message}.`);
     }
-    const responseData = await response.json();
-    return responseData;
   }
 
   /**
@@ -74,16 +69,13 @@ class APIService {
     * @throws {Error} If the API request fails.
     */
   async deleteRota(name) {
-    const response = await fetch(`${this.baseURL}/api/rotas/${name}`, {
-      method: 'DELETE',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-    });
-    if (!response.ok) {
-      throw new Error(`Could not delete rota \`${name}\``);
+    try {
+      const response = await axios.delete(`${this.baseURL}/api/rotas/${name}`);
+      return response.data;
+    } catch (error) {
+      console.log(error.message);
+      throw new Error(`Could not delete \`${name}\`. Error: ${error.message}.`);
     }
-    return undefined;
   }
 
   /**
@@ -95,20 +87,17 @@ class APIService {
     */
   async addUsersToRota(name, users) {
     if (users.length === 0) {
-      throw new Error("Users must be non-empty");
+      throw new Error("Error: Users must be non-empty.");
     }
-    const response = await fetch(`${this.baseURL}/api/rotas/${name}/users`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ users })
-    });
-    if (!response.ok) {
-      const error = await response.json();
-      throw new Error(`Could not assign users to rota \`${name}\`. ${error.message}`);
-    }
-    return undefined;
+    try {
+      const response = await axios.post(
+        `${this.baseURL}/api/rotas/${name}/users`,
+        JSON.stringify({ users })
+      );
+      return response.data;
+    } catch (error) {
+      throw new Error(`Could not add users to \`${name}\` rota. Error: ${error.message}.`);
+    };
   }
 
   /**
@@ -118,19 +107,11 @@ class APIService {
     * @throws {Error} If the API request fails or the response is invalid.
     */
   async getUserByName(name) {
-    const response = await fetch(`${this.baseURL}/api/users/by-name/${encodeURIComponent(name)}`, {
-      method: 'GET',
-      headers: { 'Content-Type': 'application/json' }
-    });
-    if (!response.ok) {
-      const error = await response.json();
-      throw new Error(`Could not get user. ${error.message}`);
-    }
     try {
-      const data = await response.json();
-      return new User(data.id, data.name);
-    } catch {
-      throw new Error('Could not parse response');
+      const response = await axios.get(`${this.baseURL}/api/users/by-name/${encodeURIComponent(name)}`);
+      return new User(response.data.id, response.data.name);
+    } catch (error) {
+      throw new Error(`Could not get user \`${name}\`. Error: ${error.message}.`);
     }
   }
 
@@ -142,39 +123,31 @@ class APIService {
     * @throws {Error} If the API request fails.
     */
   async updateRota(rota, assigned) {
-    const response = await fetch(`${this.baseURL}/api/rotas/${rota}`, {
-      method: 'PATCH',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ assigned }),
-    });
-    if (!response.ok) {
-      const error = await response.json();
-      throw new Error(`Error: ${error.message}`);
+    try {
+      await axios.patch(
+        `${this.baseURL}/api/rotas/${rota}`,
+        JSON.stringify({ assigned }),
+      );
+      return undefined;
+    } catch (error) {
+      throw new Error(`Could not update \`${rota}\` rota. Error: ${error.message}.`);
     }
-    return undefined;
   }
 
   /**
-  * Rotate a rota, updating the assigned user.
+  * Rotate a rota, updating the assigned user to the next user in the list.
   * @param {string} rota - The name of the rota to rotate.
   * @returns {Promise<RotaWithUsers>} The updated rota.
   * @throws {Error} If the request fails or the response is not valid JSON.
   */
   async rotateRota(rota) {
-    const response = await fetch(`${this.baseURL}/api/rotas/${rota}/rotate`, {
-      method: 'GET',
-      headers: { 'Content-Type': 'application/json' }
-    });
-    if (!response.ok) {
-      const error = await response.json();
-      throw new Error(`Error: ${error.message}`);
-    }
     try {
-      const data = await response.json();
+      const response = await axios.get(`${this.baseURL}/api/rotas/${rota}/rotate`);
+      const data = response.data;
       const rotaDescription = new RotaDescription(data.rota.name, data.rota.description);
       return new RotaWithUsers(rotaDescription, data.assigned, data.users);
-    } catch {
-      throw new Error('Could not parse response');
+    } catch (error) {
+      throw new Error(`Could not rotate \`${rota}\` rota. Error: ${error.message}.`);
     }
   }
 
