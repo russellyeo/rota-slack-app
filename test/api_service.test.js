@@ -1,7 +1,6 @@
 const { APIService } = require('../src/services/api_service');
 const { Rota, RotaDescription } = require('../src/models/rota');
 const { User } = require('../src/models/user');
-const { RotaWithUsers } = require('../src/models/rota-with-users');
 const axios = require("axios");
 
 jest.mock("axios");
@@ -226,7 +225,7 @@ describe('APIService', () => {
       const result = await apiService.rotateRota('standup');
       // THEN
       expect(axios.get).toHaveBeenCalledWith("https://example.com/api/rotas/standup/rotate");
-      expect(result).toStrictEqual(new RotaWithUsers(
+      expect(result).toStrictEqual(new Rota(
         new RotaDescription("standup", "daily check-in"),
         "@Helena",
         ["@Yusuf", "@Helena"]

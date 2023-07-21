@@ -1,5 +1,4 @@
 const { Rota, RotaDescription } = require('../models/rota');
-const { RotaWithUsers } = require('../models/rota-with-users');
 const { User } = require('../models/user');
 
 const axios = require("axios");
@@ -137,7 +136,7 @@ class APIService {
   /**
   * Rotate a rota, updating the assigned user to the next user in the list.
   * @param {string} rota - The name of the rota to rotate.
-  * @returns {Promise<RotaWithUsers>} The updated rota.
+  * @returns {Promise<Rota>} The updated rota.
   * @throws {Error} If the request fails or the response is not valid JSON.
   */
   async rotateRota(rota) {
@@ -145,7 +144,7 @@ class APIService {
       const response = await axios.get(`${this.baseURL}/api/rotas/${rota}/rotate`);
       const data = response.data;
       const rotaDescription = new RotaDescription(data.rota.name, data.rota.description);
-      return new RotaWithUsers(rotaDescription, data.assigned, data.users);
+      return new Rota(rotaDescription, data.assigned, data.users);
     } catch (error) {
       throw new Error(`Could not rotate \`${rota}\` rota. Error: ${error.message}.`);
     }
