@@ -1,4 +1,4 @@
-const utils = require('../mentions/utils');
+const utils = require('../src/mentions/utils');
 
 describe('clean', () => {
   test('clean slack username from the start of the string', async () => {

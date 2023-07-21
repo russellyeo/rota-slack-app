@@ -1,8 +1,8 @@
-const parse = require('../mentions/parse');
-const { APIService } = require('../services/api_service');
+const parse = require('../src/mentions/parse');
+const { APIService } = require('../src/services/api_service');
 
 // Mock APIService return values
-jest.mock('../services/api_service', () => ({
+jest.mock('../src/services/api_service', () => ({
   APIService: jest.fn().mockImplementation(() => ({
     getRotas: jest.fn().mockResolvedValue([
       { name: 'standup', description: 'daily check-in' },

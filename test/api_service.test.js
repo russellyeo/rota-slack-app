@@ -1,7 +1,7 @@
-const { APIService } = require('../services/api_service');
-const { Rota, RotaDescription } = require('../models/rota');
-const { User } = require('../models/user');
-const { RotaWithUsers } = require('../models/rota-with-users');
+const { APIService } = require('../src/services/api_service');
+const { Rota, RotaDescription } = require('../src/models/rota');
+const { User } = require('../src/models/user');
+const { RotaWithUsers } = require('../src/models/rota-with-users');
 const axios = require("axios");
 
 jest.mock("axios");
