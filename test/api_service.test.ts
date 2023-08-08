@@ -1,12 +1,12 @@
-const { APIService } = require('../src/services/api_service');
-const { Rota, RotaDescription } = require('../src/models/rota');
-const { User } = require('../src/models/user');
-const axios = require("axios");
+import { APIService } from '../src/services/api_service';
+import { Rota, RotaDescription } from '../src/models/rota';
+import { User } from '../src/models/user';
 
+import axios from 'axios';
 jest.mock("axios");
 
 describe('APIService', () => {
-  let apiService;
+  let apiService: APIService;
 
   beforeEach(() => {
     apiService = new APIService({ baseURL: 'https://example.com' });
@@ -23,7 +23,7 @@ describe('APIService', () => {
         { name: 'standup', description: 'daily check-in' },
         { name: 'retrospective', description: 'reflect on the past month' },
       ];
-      axios.get.mockResolvedValue({ status: 200, data: expectedRotas });
+      jest.mocked(axios.get).mockResolvedValue({ status: 200, data: expectedRotas });
       // WHEN we call getRotas
       const result = await apiService.getRotas();
       // THEN the expectedRotas array is returned
@@ -34,7 +34,7 @@ describe('APIService', () => {
 
     it('should throw an error if the request fails', async () => {
       // GIVEN the axios.get function returns a failure response
-      axios.get.mockRejectedValue({ status: 500, message: 'Internal error' });
+      jest.mocked(axios.get).mockRejectedValue({ status: 500, message: 'Internal error' });
       // WHEN we call getRotas
       const result = apiService.getRotas();
       // THEN an error is thrown
@@ -45,7 +45,7 @@ describe('APIService', () => {
   describe('getRota', () => {
     it('should return a Rota object with the correct properties', async () => {
       // GIVEN the axios.get function returns a successful response
-      axios.get.mockResolvedValue({
+      jest.mocked(axios.get).mockResolvedValue({
         status: 200,
         data: {
           rota: { name: 'standup', description: 'daily check-in' },
@@ -56,7 +56,6 @@ describe('APIService', () => {
       // WHEN we ask for the standup rota
       const rota = await apiService.getRota('standup');
       // THEN we get the standup rota
-      expect(rota.rota).toBeInstanceOf(RotaDescription);
       expect(rota.rota.name).toBe('standup');
       expect(rota.rota.description).toBe('daily check-in');
       expect(rota.assigned).toBe('@Yusuf');
@@ -65,7 +64,7 @@ describe('APIService', () => {
 
     it('should throw an error if the request fails', async () => {
       // GIVEN the axios.get function returns a 404 not found response
-      axios.get.mockRejectedValue({ status: 404, message: "Rota not found" });
+      jest.mocked(axios.get).mockRejectedValue({ status: 404, message: "Rota not found" });
       // WHEN we ask for a rota
       const result = apiService.getRota('standup');
       // THEN an error is thrown
@@ -76,7 +75,7 @@ describe('APIService', () => {
   describe('createRota', () => {
     it('should create a new rota with a name and a description', async () => {
       // GIVEN the axios.post function returns a successful response
-      axios.post.mockResolvedValue({
+      jest.mocked(axios.post).mockResolvedValue({
         status: 201,
         data: {
           name: 'coffee',
@@ -91,7 +90,7 @@ describe('APIService', () => {
 
     it('should create a new rota with just a name', async () => {
       // GIVEN the axios.post function returns a successful response
-      axios.post.mockResolvedValue({
+      jest.mocked(axios.post).mockResolvedValue({
         status: 201,
         data: {
           name: 'coffee'
@@ -105,7 +104,7 @@ describe('APIService', () => {
 
     it('should throw an error if the request fails', async () => {
       // GIVEN the axios.post function returns a failure response
-      axios.post.mockRejectedValue({ status: 400, message: 'The name is not valid' });
+      jest.mocked(axios.post).mockRejectedValue({ status: 400, message: 'The name is not valid' });
       // WHEN we attempt to create a new rota
       const result = apiService.createRota('coffee run', 'whose turn is it to get coffee?');
       // THEN an error is thrown
@@ -116,7 +115,7 @@ describe('APIService', () => {
   describe('deleteRota', () => {
     it('should delete an existing rota', async () => {
       // GIVEN axios.delete will succeed
-      axios.delete.mockResolvedValue({ status: 200 });
+      jest.mocked(axios.delete).mockResolvedValue({ status: 200 });
       // WHEN we delete the rota
       const result = await apiService.deleteRota('retrospective');
       // THEN the rota is deleted
@@ -126,7 +125,7 @@ describe('APIService', () => {
 
     it('should throw an error if the request fails', async () => {
       // GIVEN axios.delete will fail
-      axios.delete.mockRejectedValue({ status: 404, message: "Rota not found" });
+      jest.mocked(axios.delete).mockRejectedValue({ status: 404, message: "Rota not found" });
       // WHEN we attempt to delete the rota
       const result = apiService.deleteRota('retrospective');
       // THEN an error is thrown
@@ -137,7 +136,7 @@ describe('APIService', () => {
   describe('addUsersToRota', () => {
     it('should update an existing rota', async () => {
       // GIVEN axios.get will succeed
-      axios.post.mockResolvedValue({ status: 200 });
+      jest.mocked(axios.post).mockResolvedValue({ status: 200 });
       // WHEN we assign users to an existing rota
       const result = await apiService.addUsersToRota('standup', ['@Yasmin', '@Florian'])
       // THEN the rota is updated
@@ -150,7 +149,7 @@ describe('APIService', () => {
 
     it('should throw an error if the request fails', async () => {
       // GIVEN axios.post will fail
-      axios.post.mockRejectedValue({ status: 404, message: "Rota not found" });
+      jest.mocked(axios.post).mockRejectedValue({ status: 404, message: "Rota not found" });
       // WHEN we attempt to update the rota
       const result = apiService.addUsersToRota('standup', ['@Yasmin', '@Florian']);
       // THEN an error is thrown
@@ -167,17 +166,17 @@ describe('APIService', () => {
   describe('getUserByName', () => {
     it('should get a user by name', async () => {
       // GIVEN axios.get will return a successful response
-      axios.get.mockResolvedValue({ status: 200, data: { id: 1, name: "@Russell" } });
+      jest.mocked(axios.get).mockResolvedValue({ status: 200, data: { id: 1, name: "@Russell" } });
       // WHEN we get a user by name
       const result = await apiService.getUserByName('@Russell');
       // THEN the user is returned
       expect(axios.get).toHaveBeenCalledWith("https://example.com/api/users/by-name/%40Russell");
-      expect(result).toStrictEqual(new User(1, "@Russell"));
+      expect(result).toEqual({ id: 1, name: "@Russell" });
     });
 
     it('should return not found if the user does not exist', async () => {
       // GIVEN axios.get will return a 404 not found response
-      axios.get.mockRejectedValue({ status: 404, message: "User not found" });
+      jest.mocked(axios.get).mockRejectedValue({ status: 404, message: "User not found" });
       // WHEN we get a user by name
       const result = apiService.getUserByName('@Russell');
       // THEN an error is thrown
@@ -189,7 +188,7 @@ describe('APIService', () => {
   describe('updateRota', () => {
     it('should update a rota', async () => {
       // GIVEN axios.patch will return a successful response
-      axios.patch.mockResolvedValue({ status: 200, data: { assigned: 1 } });
+      jest.mocked(axios.patch).mockResolvedValue({ status: 200, data: { assigned: 1 } });
       // WHEN we update a rota
       const result = await apiService.updateRota('standup', 1);
       // THEN the rota is updated
@@ -202,7 +201,7 @@ describe('APIService', () => {
 
     it('should return an error if the request fails', async () => {
       // GIVEN axios.patch will fail
-      axios.patch.mockRejectedValue({ status: 404, message: "Rota not found" });
+      jest.mocked(axios.patch).mockRejectedValue({ status: 404, message: "Rota not found" });
       // WHEN we update a rota
       const result = apiService.updateRota('standup', 1);
       // THEN an error is thrown
@@ -213,7 +212,7 @@ describe('APIService', () => {
   describe('rotateRota', () => {
     it('should rotate a rota', async () => {
       // GIVEN axios.get will return a successful response
-      axios.get.mockResolvedValue({
+      jest.mocked(axios.get).mockResolvedValue({
         status: 200,
         data: {
           rota: { name: "standup", description: "daily check-in" },
@@ -224,17 +223,18 @@ describe('APIService', () => {
       // WHEN we rotate a rota
       const result = await apiService.rotateRota('standup');
       // THEN
+      const expectedRota: Rota = {
+        rota: { name: "standup", description: "daily check-in" },
+        assigned: "@Helena",
+        users: ["@Yusuf", "@Helena"]
+      };
       expect(axios.get).toHaveBeenCalledWith("https://example.com/api/rotas/standup/rotate");
-      expect(result).toStrictEqual(new Rota(
-        new RotaDescription("standup", "daily check-in"),
-        "@Helena",
-        ["@Yusuf", "@Helena"]
-      ));
+      expect(result).toStrictEqual(expectedRota);
     });
 
     it('should return an error if the request fails', async () => {
       // GIVEN axios.get will fail
-      axios.get.mockRejectedValue({ status: 404, message: "Rota not found" });
+      jest.mocked(axios.get).mockRejectedValue({ status: 404, message: "Rota not found" });
       // WHEN we rotate a rota
       const result = apiService.rotateRota('standup');
       // THEN an error is thrown
