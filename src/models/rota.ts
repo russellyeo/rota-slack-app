@@ -6,7 +6,7 @@ interface Rota {
 
 interface RotaDescription {
   name: string;
-  description: string;
+  description?: string;
 };
 
 export { Rota, RotaDescription };

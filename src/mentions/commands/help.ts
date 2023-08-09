@@ -1,8 +1,14 @@
-/*
-  Help
-  @Rota help
-*/
-module.exports = async (say) => {
+import { SayFn } from "@slack/bolt";
+
+/**
+ * Help command
+ * 
+ * Shows the possible commands to the user
+ *
+ * @param say - The SayFn function from Slack Bolt used to send a message.
+ * @returns A Promise that resolves when command is complete.
+ */
+export const help = async (say: SayFn): Promise<void> => {
   try {
     await say(
       {
@@ -80,7 +86,7 @@ module.exports = async (say) => {
         ]
       }
     );
-  } catch (error) {
+  } catch (error: any) {
     await say(error.message);
   }
 };

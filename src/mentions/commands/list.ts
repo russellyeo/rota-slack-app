@@ -1,8 +1,17 @@
-/*
-  List
-  @Rota list
-*/
-module.exports = async (service, say) => {
+import { APIService } from "../../services/api_service";
+import { Rota } from "../../models/rota";
+import { SayFn } from "@slack/bolt";
+
+/**
+ * List command
+ * 
+ * List all rota names in the workspace
+ *
+ * @param service - An instance of the APIService.
+ * @param say - The SayFn function from Slack Bolt used to send a message.
+ * @returns A Promise that resolves when command is complete.
+ */
+export const list = async (service: APIService, say: SayFn): Promise<void> => {
   try {
     const rotas = await service.getRotas();
 
@@ -19,10 +28,17 @@ module.exports = async (service, say) => {
         ]
       });
     } else {
-      const list = rotas.map((rota) => {
-        const description = rota.description ? ` - ${rota.description}` : '';
-        return `\`${rota.name}\`${description}`;
-      }).join('\n');
+      const list = rotas
+        .map((rota: Rota) => {
+          if (rota && rota.rota) {
+            const description = rota.rota.description ? ` - ${rota.rota.description}` : '';
+            return `\`${rota.rota.name}\`${description}`;
+          }
+          return null;
+        })
+        .filter(Boolean)
+        .join('\n');
+
 
       await say({
         blocks: [
@@ -53,7 +69,7 @@ module.exports = async (service, say) => {
         ]
       });
     }
-  } catch (error) {
+  } catch (error: any) {
     await say(error.message);
   }
 };

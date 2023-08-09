@@ -1,6 +1,9 @@
-import parse from '../src/mentions/parse';
-import { RotaDescription } from '../src/models/rota';
+import { mentionsParser } from '../src/mentions/parse';
+import { Rota } from '../src/models/rota';
+
 import { expect, jest } from '@jest/globals';
+import { SayArguments } from "@slack/bolt";
+
 import APIService, { mockGetRotas, mockCreateRota, mockDeleteRota, mockAddUsersToRota, mockGetRota, mockRotateRota, mockUpdateRota, mockGetUserByName } from '../src/services/__mocks__/api_service';
 
 jest.mock("../src/services/api_service");
@@ -8,7 +11,17 @@ jest.mock("../src/services/api_service");
 describe('app_mentions parsing', () => {
 
   const mockAPIService = new APIService({ baseURL: 'https://www.example.com' });
-  const mockSay = jest.fn();
+  const mockSay = jest.fn((message: string | SayArguments) => {
+    return Promise.resolve({
+      ok: true,
+      channel: 'channel_id',
+      ts: 'timestamp',
+      message: {
+        type: 'message',
+        text: typeof message === 'string' ? message : 'dummy_response_text'
+      }
+    });
+  });
 
   beforeEach(() => {
     mockGetRota.mockClear();
@@ -25,12 +38,12 @@ describe('app_mentions parsing', () => {
   it('should list rotas', async () => {
     // GIVEN the API service returns a list of rotas
     mockGetRotas.mockResolvedValue([
-      { name: 'standup', description: 'daily check-in' },
-      { name: 'retrospective', description: 'reflect on the past month' },
-    ] as Array<RotaDescription>);
+      { rota: { name: 'standup', description: 'daily check-in' }, assigned: '123', users: [] },
+      { rota: { name: 'retrospective', description: 'reflect on the past month' }, assigned: '456', users: [] },
+    ] as Array<Rota>);
     // WHEN we parse the input 'list'
     const input = 'list';
-    await parse(input, mockAPIService, mockSay);
+    await mentionsParser(input, mockAPIService, mockSay);
     // THEN the API service should be called
     expect(mockGetRotas).toHaveBeenCalledTimes(1);
     // AND the response should be sent to the user
@@ -66,7 +79,7 @@ describe('app_mentions parsing', () => {
 
   it('should list available commands when asked for help', async () => {
     const input = 'help';
-    await parse(input, mockAPIService, mockSay);
+    await mentionsParser(input, mockAPIService, mockSay);
     expect(mockSay).toHaveBeenCalledTimes(1);
   });
 
@@ -77,7 +90,7 @@ describe('app_mentions parsing', () => {
     );
     // WHEN
     const input = 'create standup "daily standup"';
-    await parse(input, mockAPIService, mockSay);
+    await mentionsParser(input, mockAPIService, mockSay);
     // THEN
     expect(mockCreateRota).toHaveBeenCalledWith('standup', 'daily standup');
     expect(mockSay).toHaveBeenCalledWith({
@@ -100,7 +113,7 @@ describe('app_mentions parsing', () => {
     );
     // WHEN
     const input = 'create standup';
-    await parse(input, mockAPIService, mockSay);
+    await mentionsParser(input, mockAPIService, mockSay);
     // THEN
     expect(mockCreateRota).toHaveBeenCalledWith('standup', undefined);
     expect(mockSay).toHaveBeenCalledWith({
@@ -121,7 +134,7 @@ describe('app_mentions parsing', () => {
     mockDeleteRota.mockResolvedValue(undefined);
     // WHEN
     const input = 'delete standup';
-    await parse(input, mockAPIService, mockSay);
+    await mentionsParser(input, mockAPIService, mockSay);
     // THEN
     expect(mockDeleteRota).toHaveBeenCalledWith('standup');
     expect(mockSay).toHaveBeenCalledWith({
@@ -142,7 +155,7 @@ describe('app_mentions parsing', () => {
     mockAddUsersToRota.mockResolvedValue(undefined);
     // WHEN
     const input = 'add standup @Sara @Yusuf';
-    await parse(input, mockAPIService, mockSay);
+    await mentionsParser(input, mockAPIService, mockSay);
     // THEN
     expect(mockAddUsersToRota).toHaveBeenCalledWith('standup', ['@Sara', '@Yusuf']);
     expect(mockSay).toHaveBeenCalledTimes(1);
@@ -153,7 +166,7 @@ describe('app_mentions parsing', () => {
     mockUpdateRota.mockResolvedValue(undefined);
     // WHEN
     const input = 'assign @Russell standup';
-    await parse(input, mockAPIService, mockSay);
+    await mentionsParser(input, mockAPIService, mockSay);
     // THEN
     expect(mockSay).toHaveBeenCalledTimes(1);
   });
@@ -167,7 +180,7 @@ describe('app_mentions parsing', () => {
     });
     // WHEN
     const input = 'who standup';
-    await parse(input, mockAPIService, mockSay);
+    await mentionsParser(input, mockAPIService, mockSay);
     // THEN
     expect(mockGetRota).toHaveBeenCalledTimes(1);
     expect(mockGetRota).toHaveBeenCalledWith("standup")
@@ -184,7 +197,7 @@ describe('app_mentions parsing', () => {
     });
     // WHEN
     const input = 'rotate standup';
-    await parse(input, mockAPIService, mockSay);
+    await mentionsParser(input, mockAPIService, mockSay);
     // THEN
     expect(mockRotateRota).toHaveBeenCalledTimes(1);
     expect(mockRotateRota).toHaveBeenCalledWith("standup")
@@ -195,14 +208,14 @@ describe('app_mentions parsing', () => {
   describe('show', () => {
     it("should show a rota", async () => {
       const input = 'show standup';
-      await parse(input, mockAPIService, mockSay);
+      await mentionsParser(input, mockAPIService, mockSay);
       expect(mockGetRota).toHaveBeenCalledWith('standup');
       expect(mockSay).toHaveBeenCalledTimes(1);
     });
 
     // it("should complain if no name was given", async () => {
     //   const input = 'show';
-    //   await parse(input, mockAPIService, mockSay);
+    //   await mentionsParser(input, mockAPIService, mockSay);
     //   expect(mockGetRota).toHaveBeenCalledTimes(0);
     //   expect(mockSay).toHaveBeenCalledWith("🤔 I'm sorry, I didn't understand that. Please try rephrasing your question or enter `@Rota help` to see a list of available commands.");
     // });
@@ -211,7 +224,7 @@ describe('app_mentions parsing', () => {
   describe('unknown', () => {
     it('should handle an unknown command', async () => {
       const input = 'unknown command';
-      await parse(input, mockAPIService, mockSay);
+      await mentionsParser(input, mockAPIService, mockSay);
       expect(mockSay).toHaveBeenCalledTimes(1);
       expect(mockSay).toHaveBeenCalledWith("🤔 I'm sorry, I didn't understand that. Please try rephrasing your question or enter `@Rota help` to see a list of available commands.");
     });

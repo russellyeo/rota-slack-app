@@ -1,7 +1,8 @@
-const { App, LogLevel } = require('@slack/bolt');
-const { config } = require('dotenv');
-const mentions = require('./mentions');
-const { APIService } = require('./services/api_service');
+
+import { App, LogLevel } from '@slack/bolt';
+import { APIService } from './services/api_service';
+import { config } from 'dotenv';
+import mentions from './mentions';
 
 /** Configure Environment Variables */
 config();
@@ -15,7 +16,7 @@ const app = new App({
   logLevel: LogLevel.DEBUG,
 });
 const service = new APIService({
-  baseURL: process.env.ROTA_API_URL,
+  baseURL: process.env.ROTA_API_URL || '',
 });
 
 /** Register Listeners */
@@ -24,7 +25,7 @@ mentions.register(app, service);
 /** Start Bolt App */
 (async () => {
   try {
-    await app.start(process.env.PORT || 3000);
+    await app.start(Number(process.env.PORT || 3000));
     console.log('⚡️ Bolt app is running! ⚡️');
   } catch (error) {
     console.error('Unable to start App', error);
