@@ -2,7 +2,18 @@ import axios from "axios";
 import { Rota, RotaDescription } from "../models/rota";
 import { User } from "../models/user";
 
-class APIService {
+interface IAPIService {
+  getRotas(): Promise<Array<Rota>>;
+  getRota(name: string): Promise<Rota>;
+  createRota(name: string, description?: string): Promise<RotaDescription>;
+  deleteRota(name: string): Promise<undefined>;
+  addUsersToRota(name: string, users: Array<string>): Promise<undefined>;
+  getUserByName(name: string): Promise<User>;
+  updateRota(rota: string, assigned: number): Promise<undefined>;
+  rotateRota(rota: string): Promise<Rota>;
+}
+
+class APIService implements IAPIService {
   private baseURL: string;
 
   constructor({ baseURL }: { baseURL: string }) {
@@ -154,4 +165,4 @@ class APIService {
   }
 }
 
-export { APIService };
+export { IAPIService, APIService };

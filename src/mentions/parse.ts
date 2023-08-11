@@ -1,6 +1,6 @@
 import yargs from 'yargs';
 
-import { APIService } from '../services/api_service';
+import { IAPIService } from '../services/api_service';
 import { SayFn } from "@slack/bolt";
 
 import { add } from './commands/add';
@@ -14,7 +14,7 @@ import { show } from './commands/show';
 import { who } from './commands/who';
 
 
-export const mentionsParser = async (text: string, service: APIService, say: SayFn) => {
+export const mentionsParser = async (text: string, service: IAPIService, say: SayFn) => {
   const removeQuotes = (string: string) => string.replace(/"+/g, '');
 
   const yargsParser = yargs

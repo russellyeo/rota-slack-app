@@ -1,4 +1,4 @@
-import { APIService } from "../../services/api_service";
+import { IAPIService } from "../../services/api_service";
 import { SayFn } from "@slack/bolt";
 
 /**
@@ -12,7 +12,7 @@ import { SayFn } from "@slack/bolt";
  * @param usernames - The usernames to be added to the rota.
  * @returns A Promise that resolves when command is complete.
  */
-export const add = async (service: APIService, say: SayFn, rotaName: string, usernames: Array<string>): Promise<void> => {
+export const add = async (service: IAPIService, say: SayFn, rotaName: string, usernames: Array<string>): Promise<void> => {
   try {
     await service.addUsersToRota(rotaName, usernames);
     await say({

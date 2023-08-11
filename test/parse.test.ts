@@ -4,9 +4,14 @@ import { Rota } from '../src/models/rota';
 import { expect, jest } from '@jest/globals';
 import { SayArguments } from "@slack/bolt";
 
-import APIService, { mockGetRotas, mockCreateRota, mockDeleteRota, mockAddUsersToRota, mockGetRota, mockRotateRota, mockUpdateRota, mockGetUserByName } from '../src/services/__mocks__/api_service';
+import { APIService } from '../src/services/api_service';
+import APIServiceMock, { mockGetRotas, mockCreateRota, mockDeleteRota, mockAddUsersToRota, mockGetRota, mockRotateRota, mockUpdateRota, mockGetUserByName } from '../src/services/__mocks__/api_service';
 
-jest.mock("../src/services/api_service");
+jest.mock('../src/services/api_service', () => {
+  return {
+    APIService: jest.fn().mockImplementation(() => APIServiceMock),
+  };
+});
 
 describe('app_mentions parsing', () => {
 

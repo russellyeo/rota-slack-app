@@ -1,4 +1,4 @@
-import { APIService } from "../../services/api_service";
+import { IAPIService } from "../../services/api_service";
 import { Rota } from "../../models/rota";
 import { SayFn } from "@slack/bolt";
 
@@ -11,7 +11,7 @@ import { SayFn } from "@slack/bolt";
  * @param say - The SayFn function from Slack Bolt used to send a message.
  * @returns A Promise that resolves when command is complete.
  */
-export const list = async (service: APIService, say: SayFn): Promise<void> => {
+export const list = async (service: IAPIService, say: SayFn): Promise<void> => {
   try {
     const rotas = await service.getRotas();
 

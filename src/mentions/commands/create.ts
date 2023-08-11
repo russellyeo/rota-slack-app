@@ -1,4 +1,4 @@
-import { APIService } from "../../services/api_service";
+import { IAPIService } from "../../services/api_service";
 import { SayFn } from "@slack/bolt";
 
 /**
@@ -12,7 +12,7 @@ import { SayFn } from "@slack/bolt";
  * @param description - (Optional) A description for the rota.
  * @returns A Promise that resolves when command is complete.
  */
-export const create = async (service: APIService, say: SayFn, rotaName: string, rotaDescription?: string): Promise<void> => {
+export const create = async (service: IAPIService, say: SayFn, rotaName: string, rotaDescription?: string): Promise<void> => {
   try {
     await service.createRota(rotaName, rotaDescription);
     await say({

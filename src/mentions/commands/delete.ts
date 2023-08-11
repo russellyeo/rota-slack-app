@@ -1,4 +1,4 @@
-import { APIService } from "../../services/api_service";
+import { IAPIService } from "../../services/api_service";
 import { SayFn } from "@slack/bolt";
 
 /**
@@ -11,7 +11,7 @@ import { SayFn } from "@slack/bolt";
  * @param rotaName - The name of the rota to be deleted.
  * @returns A Promise that resolves when command is complete.
  */
-export const deleteCommand = async (service: APIService, say: SayFn, rotaName: string): Promise<void> => {
+export const deleteCommand = async (service: IAPIService, say: SayFn, rotaName: string): Promise<void> => {
   try {
     await service.deleteRota(rotaName);
     await say({

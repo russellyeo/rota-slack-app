@@ -1,4 +1,4 @@
-import { APIService } from "../../services/api_service";
+import { IAPIService } from "../../services/api_service";
 import { SayFn } from "@slack/bolt";
 
 /**
@@ -11,7 +11,7 @@ import { SayFn } from "@slack/bolt";
  * @param rotaName - The name of the rota to rotate.
  * @returns A Promise that resolves when command is complete.
  */
-export const rotate = async (service: APIService, say: SayFn, rotaName: string): Promise<void> => {
+export const rotate = async (service: IAPIService, say: SayFn, rotaName: string): Promise<void> => {
   try {
     const rota = await service.rotateRota(rotaName);
     await say(`\`${rota.rota.name}\` was rotated. \`${rota.assigned}\` is now the assigned user.`);

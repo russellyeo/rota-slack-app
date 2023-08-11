@@ -1,6 +1,5 @@
 import { APIService } from '../src/services/api_service';
-import { Rota, RotaDescription } from '../src/models/rota';
-import { User } from '../src/models/user';
+import { Rota } from '../src/models/rota';
 
 import axios from 'axios';
 jest.mock("axios");
