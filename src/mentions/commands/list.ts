@@ -1,5 +1,5 @@
 import { IAPIService } from "../../services/api_service";
-import { Rota } from "../../models/rota";
+import { Rota } from "../../entities/rota";
 import { SayFn } from "@slack/bolt";
 
 /**

@@ -1,6 +1,6 @@
 import axios from "axios";
-import { Rota, RotaDescription } from "../models/rota";
-import { User } from "../models/user";
+import { Rota, RotaDescription } from "../entities/rota";
+import { User } from "../entities/user";
 
 interface IAPIService {
   getRotas(): Promise<Array<Rota>>;

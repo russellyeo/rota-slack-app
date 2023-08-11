@@ -1,5 +1,5 @@
 import { mentionsParser } from '../src/mentions/parse';
-import { Rota } from '../src/models/rota';
+import { Rota } from '../src/entities/rota';
 
 import { expect, jest } from '@jest/globals';
 import { SayArguments } from "@slack/bolt";
