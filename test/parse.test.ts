@@ -4,8 +4,8 @@ import { Rota } from '../src/entities/rota';
 import { expect, jest } from '@jest/globals';
 import { SayArguments } from "@slack/bolt";
 
-import { APIService } from '../src/services/api_service';
-import APIServiceMock, { mockGetRotas, mockCreateRota, mockDeleteRota, mockAddUsersToRota, mockGetRota, mockRotateRota, mockUpdateRota, mockGetUserByName } from '../src/services/__mocks__/api_service';
+import { APIService } from '../src/infrastructure/api_service';
+import APIServiceMock, { mockGetRotas, mockCreateRota, mockDeleteRota, mockAddUsersToRota, mockGetRota, mockRotateRota, mockUpdateRota, mockGetUserByName } from '../src/infrastructure/__mocks__/api_service';
 
 jest.mock('../src/services/api_service', () => {
   return {

@@ -1,6 +1,6 @@
 
 import { App, LogLevel } from '@slack/bolt';
-import { APIService } from './services/api_service';
+import { APIService } from './infrastructure/api_service';
 import { config } from 'dotenv';
 import mentions from './mentions';
 

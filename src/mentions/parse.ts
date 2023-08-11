@@ -1,6 +1,6 @@
 import yargs from 'yargs';
 
-import { IAPIService } from '../services/api_service';
+import { IAPIService } from '../infrastructure/api_service';
 import { SayFn } from "@slack/bolt";
 
 import { add } from './commands/add';

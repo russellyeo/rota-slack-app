@@ -1,4 +1,4 @@
-import { IAPIService } from "../../services/api_service";
+import { IAPIService } from "../../infrastructure/api_service";
 import { User } from "../../entities/user";
 import { SayFn } from "@slack/bolt";
 
