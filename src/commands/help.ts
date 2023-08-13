@@ -79,7 +79,7 @@ export const HelpCommand = {
                 "type": "section",
                 "text": {
                   "type": "mrkdwn",
-                  "text": ":bell:  `@Rota who [rota-name]` who is assigned to a rota."
+                  "text": ":bell:  `@Rota who [rota-name] \"[optional handoff message]\"` who is assigned to a rota. `\"[optional handoff message]\"` must be enclosed in double quotes if given."
                 }
               },
               {

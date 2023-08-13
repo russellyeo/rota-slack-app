@@ -171,21 +171,40 @@ describe('MentionsController', () => {
     expect(mockSay).toHaveBeenCalledTimes(1);
   });
 
-  it('should return who is assigned to a rota', async () => {
-    // GIVEN
-    mockGetRota.mockResolvedValue({
-      rota: { name: 'standup', description: 'daily check-in' },
-      assigned: "@Yusuf",
-      users: ["@Yusuf", "@Octavia", "@Fatima"]
+  describe('who', () => {
+    it('should return who is assigned to a rota', async () => {
+      // GIVEN
+      mockGetRota.mockResolvedValue({
+        rota: { name: 'standup', description: 'daily check-in' },
+        assigned: "@Yusuf",
+        users: ["@Yusuf", "@Octavia", "@Fatima"]
+      });
+      // WHEN
+      const input = 'who standup';
+      await mentionsController.handleMention(input);
+      // THEN
+      expect(mockGetRota).toHaveBeenCalledTimes(1);
+      expect(mockGetRota).toHaveBeenCalledWith("standup")
+      expect(mockSay).toHaveBeenCalledTimes(1);
+      expect(mockSay).toHaveBeenCalledWith("@Yusuf");
     });
-    // WHEN
-    const input = 'who standup';
-    await mentionsController.handleMention(input);
-    // THEN
-    expect(mockGetRota).toHaveBeenCalledTimes(1);
-    expect(mockGetRota).toHaveBeenCalledWith("standup")
-    expect(mockSay).toHaveBeenCalledTimes(1);
-    expect(mockSay).toHaveBeenCalledWith("@Yusuf");
+
+    it('should return who is assigned to a rota with a handoff message', async () => {
+      // GIVEN
+      mockGetRota.mockResolvedValue({
+        rota: { name: 'standup', description: 'daily check-in' },
+        assigned: "@Yusuf",
+        users: ["@Yusuf", "@Octavia", "@Fatima"]
+      });
+      // WHEN
+      const input = 'who standup "it is your turn to run standup today"';
+      await mentionsController.handleMention(input);
+      // THEN
+      expect(mockGetRota).toHaveBeenCalledTimes(1);
+      expect(mockGetRota).toHaveBeenCalledWith("standup")
+      expect(mockSay).toHaveBeenCalledTimes(1);
+      expect(mockSay).toHaveBeenCalledWith("@Yusuf it is your turn to run standup today");
+    });
   });
 
   it('should rotate a rota', async () => {

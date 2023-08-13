@@ -158,10 +158,11 @@ class MentionsController implements IMentionsController {
         }
       })
       .command({
-        command: 'who <rota>',
+        command: 'who <rota> [handoff]',
         builder: (yargs) => {
           return yargs
-            .positional('rota', { type: 'string' });
+            .positional('rota', { type: 'string' })
+            .option('handoff', { type: 'string' });
         },
         handler: (argv) => {
           const whoCommand = WhoCommand.make({
@@ -169,7 +170,8 @@ class MentionsController implements IMentionsController {
             slackAdapter: this.slackAdapter,
             errorHandler: errorHandler
           });
-          whoCommand(argv.rota);
+          const handoff = argv.handoff ? MessageSanitizer.removeQuotes(argv.handoff) : undefined;
+          whoCommand(argv.rota, handoff);
         }
       })
       .command({
