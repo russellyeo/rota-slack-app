@@ -1,7 +1,7 @@
 version: 2
 updates:
   - package-ecosystem: "npm"
-    directory: "/"
+    directory: "./slack-app"
     schedule:
       interval: "monthly"
     labels:

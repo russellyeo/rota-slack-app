@@ -1,6 +1,6 @@
 # node/npm
-/node_modules
-/package-lock.json
+node_modules/
+package-lock.json
 
 # macOS
 .DS_Store
@@ -10,7 +10,7 @@
 !.env.sample
 
 # VS Code
-.vscode
+.vscode/
 
 # build products
-/dist
+dist/
