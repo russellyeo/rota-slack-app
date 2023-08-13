@@ -5,7 +5,7 @@ import MockAPIService, { mockGetRotas, mockCreateRota, mockDeleteRota, mockAddUs
 import { SlackAdapter } from '../../src/infrastructure/slack_adapter';
 import MockSlackAdapter, { mockSay, mockSetSayFn } from '../../src/infrastructure/__mocks__/slack_adapter';
 import { MentionsController } from '../../src/interfaces/mentions_controller';
-import { Rota } from '../../src/entities/rota';
+import { Rota, RotaDescription } from '../../src/entities/rota';
 
 jest.mock('../../src/infrastructure/api_service', () => {
   return {
@@ -33,45 +33,47 @@ describe('MentionsController', () => {
     jest.clearAllMocks();
   });
 
-  it('should list rotas', async () => {
-    // GIVEN the API service returns a list of rotas
-    mockGetRotas.mockResolvedValue([
-      { rota: { name: 'standup', description: 'daily check-in' }, assigned: '123', users: [] },
-      { rota: { name: 'retrospective', description: 'reflect on the past month' }, assigned: '456', users: [] },
-    ] as Array<Rota>);
-    // WHEN we parse the input 'list'
-    const input = 'list';
-    await mentionsController.handleMention(input);
-    // THEN the API service should be called
-    expect(mockGetRotas).toHaveBeenCalledTimes(1);
-    // AND the response should be sent to the user
-    expect(mockSay).toHaveBeenCalledWith({
-      blocks: [
-        {
-          type: 'section',
-          text: {
-            type: 'mrkdwn',
-            text: '*Rotas in your workspace*',
+  describe('handleMention list', () => {
+    it('should list rotas', async () => {
+      // GIVEN the API service returns a list of rotas
+      mockGetRotas.mockResolvedValue([
+        { name: 'standup', description: 'daily check-in' },
+        { name: 'retrospective', description: 'reflect on the past month' }
+      ] as Array<RotaDescription>);
+      // WHEN we parse the input 'list'
+      const input = 'list';
+      await mentionsController.handleMention(input);
+      // THEN the API service should be called
+      expect(mockGetRotas).toHaveBeenCalledTimes(1);
+      // AND the response should be sent to the user
+      expect(mockSay).toHaveBeenCalledWith({
+        blocks: [
+          {
+            type: 'section',
+            text: {
+              type: 'mrkdwn',
+              text: '*Rotas in your workspace*',
+            },
           },
-        },
-        {
-          type: 'section',
-          text: {
-            type: 'mrkdwn',
-            text: "`standup` - daily check-in\n`retrospective` - reflect on the past month",
+          {
+            type: 'section',
+            text: {
+              type: 'mrkdwn',
+              text: "`standup` - daily check-in\n`retrospective` - reflect on the past month",
+            },
           },
-        },
-        {
-          type: 'divider',
-        },
-        {
-          type: 'section',
-          text: {
-            type: 'mrkdwn',
-            text: 'Try `@Rota help` for to see a list of possible commands',
+          {
+            type: 'divider',
           },
-        }
-      ]
+          {
+            type: 'section',
+            text: {
+              type: 'mrkdwn',
+              text: 'Try `@Rota help` for to see a list of possible commands',
+            },
+          }
+        ]
+      });
     });
   });
 

@@ -1,4 +1,4 @@
-import { Rota } from "../entities/rota";
+import { RotaDescription } from "../entities/rota";
 import { IAPIService } from "../infrastructure/api_service";
 import { ISlackAdapter } from "../infrastructure/slack_adapter";
 
@@ -35,14 +35,10 @@ export const ListCommand = {
           });
         } else {
           const list = rotas
-            .map((rota: Rota) => {
-              if (rota && rota.rota) {
-                const description = rota.rota.description ? ` - ${rota.rota.description}` : '';
-                return `\`${rota.rota.name}\`${description}`;
-              }
-              return null;
+            .map((rota: RotaDescription) => {
+              const description = rota.description ? `- ${rota.description}` : '';
+              return `\`${rota.name}\` ${description}`;
             })
-            .filter(Boolean)
             .join('\n');
 
 

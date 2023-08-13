@@ -3,7 +3,7 @@ import { Rota, RotaDescription } from "../entities/rota";
 import { User } from "../entities/user";
 
 interface IAPIService {
-  getRotas(): Promise<Array<Rota>>;
+  getRotas(): Promise<Array<RotaDescription>>;
   getRota(name: string): Promise<Rota>;
   createRota(name: string, description?: string): Promise<RotaDescription>;
   deleteRota(name: string): Promise<undefined>;
@@ -22,12 +22,12 @@ class APIService implements IAPIService {
 
   /**
    * Retrieves a list of rotas from the API.
-   * @returns {Promise<Array<Rota>>} A Promise that resolves to an array of rotas.
+   * @returns {Promise<Array<RotaDescription>>} A Promise that resolves to an array of rotas.
    * @throws {Error} If the API request fails.
    */
-  async getRotas(): Promise<Array<Rota>> {
+  async getRotas(): Promise<Array<RotaDescription>> {
     try {
-      const response = await axios.get<Array<Rota>>(
+      const response = await axios.get<Array<RotaDescription>>(
         `${this.baseURL}/api/rotas`
       );
       return response.data;
