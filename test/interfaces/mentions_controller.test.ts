@@ -1,5 +1,4 @@
 import { expect, jest } from '@jest/globals';
-import { SayArguments } from "@slack/bolt";
 
 import { APIService } from '../../src/infrastructure/api_service';
 import MockAPIService, { mockGetRotas, mockCreateRota, mockDeleteRota, mockAddUsersToRota, mockGetRota, mockRotateRota, mockUpdateRota, mockGetUserByName } from '../../src/infrastructure/__mocks__/api_service';
@@ -20,7 +19,7 @@ jest.mock('../../src/infrastructure/slack_adapter', () => {
   };
 });
 
-describe('app_mentions parsing', () => {
+describe('MentionsController', () => {
 
   const mockAPIService = new APIService({ baseURL: 'https://www.example.com' });
   const mockSlackAdapter = new SlackAdapter();

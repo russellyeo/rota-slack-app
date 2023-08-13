@@ -9,9 +9,6 @@ describe('APIService', () => {
 
   beforeEach(() => {
     apiService = new APIService({ baseURL: 'https://example.com' });
-  });
-
-  afterEach(() => {
     jest.clearAllMocks();
   });
 
