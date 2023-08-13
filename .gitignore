@@ -1,3 +1,6 @@
+# node/npm
+node_modules/
+
 # macOS
 .DS_Store
 
@@ -7,3 +10,6 @@
 
 # VS Code
 .vscode/
+
+# build products
+dist/

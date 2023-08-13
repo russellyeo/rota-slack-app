@@ -4,8 +4,6 @@ on:
   push:
     branches: 
       - main
-    paths:
-      - slack-app/**
 
 jobs:
   test:
@@ -21,9 +19,7 @@ jobs:
           node-version: '18'
 
       - name: Install dependencies
-        working-directory: slack-app
         run: npm ci
 
       - name: Run tests
-        working-directory: slack-app
         run: npm test

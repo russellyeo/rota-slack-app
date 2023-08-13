@@ -1,10 +1,6 @@
 # Rota Slack Bot
 
-A slack bot to help you manage your team's rotas. 
-
-## Files
-- `api/` The API that the slack bot uses to store and retrieve rota information
-- `slack-app/` The slack application that provides the bot functionality
+A slack bot to help you manage your team's rotas.
 
 ## Usage
 Say for example, that you have a team standup every weekday at 9:30, you could create a rota with the following commands:
@@ -33,22 +29,18 @@ You may want to schedule these operations from a separate channel (e.g. `#rota-i
 - 💁  `@Rota help` show this list of commands.
 
 ## Implementation
-- The slack app is written in Typescript using the [bolt-js](https://github.com/slackapi/bolt-js) framework.
-  - Uses the [Events API](https://api.slack.com/events-api) to receive events from Slack, via the `app_mention` event with `app_mentions:read` permissions.
-  - Uses the [Slack Web API](https://api.slack.com/web) to send messages, via the `say` function with `chat:write` permissions.
-  - Uses the [yargs](https://github.com/yargs/yargs-parser) parsing library to parse commands from the message text.
-  - Makes outbound requests to the hosted API.
-- The scala API is written in Scala using the [play](https://www.playframework.com/) framework.
-  - Uses the [play-slick](https://www.playframework.com/documentation/2.8.x/PlaySlick) driver to connect to a postgres database.
+- The app is written in Typescript using the [bolt-js](https://github.com/slackapi/bolt-js) framework.
+- Uses the [Events API](https://api.slack.com/events-api) to receive events from Slack, via the `app_mention` event with `app_mentions:read` permissions.
+- Uses the [Slack Web API](https://api.slack.com/web) to send messages, via the `say` function with `chat:write` permissions.
+- Uses the [yargs](https://github.com/yargs/yargs-parser) parsing library to parse commands from the message text.
+- Makes outbound requests to the hosted API, see [rota-api](https://github.com/russellyeo/rota-api) for more info.
 
 ## Development
 
 ### Prerequisites
-- [node.js](https://nodejs.org/en)
-- [scala](https://www.scala-lang.org/download/)
+- [node.js](https://nodejs.org/en) (v18.x)
 
-### Slack App
-
+### Run
 ```shell
 # Change directory 
 cd slack-app
@@ -64,22 +56,6 @@ npm test
 
 # (optional) expose an ngrok tunnel to your local machine
 ngrok http 3000
-```
-
-### API
-
-```shell
-# Change directory 
-cd api
-
-# Install dependencies and run the app
-sbt run
-
-# Run tests
-sbt test
-
-# (optional) expose an ngrok tunnel to your local machine
-ngrok http 9000
 ```
 
 ## Notes
