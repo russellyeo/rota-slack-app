@@ -42,9 +42,6 @@ You may want to schedule these operations from a separate channel (e.g. `#rota-i
 
 ### Run
 ```shell
-# Change directory 
-cd slack-app
-
 # Install dependencies
 npm install
 
