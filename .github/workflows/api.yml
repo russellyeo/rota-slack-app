@@ -1,8 +1,11 @@
-name: CI
+name: API CI
 
 on:
   push:
-    branches: ["main"]
+    branches: 
+      - main
+    paths:
+      - api/**
 
 permissions:
   contents: read
@@ -27,19 +30,19 @@ jobs:
 
       - name: Build and test
         shell: bash
-        working-directory: ./api
+        working-directory: api
         run: sbt -v test
 
       - name: Build and tag Docker image
         shell: bash
-        working-directory: ./api
+        working-directory: api
         run: |
           sbt -v docker:publishLocal
           docker tag rota:latest registry.digitalocean.com/russellyeo/rota:latest
 
       - name: Deploy to Digital Ocean
         shell: bash
-        working-directory: ./api
+        working-directory: api
         run: |
           doctl registry login registry.digitalocean.com/russellyeo --expiry-seconds 100
           docker push registry.digitalocean.com/russellyeo/rota
