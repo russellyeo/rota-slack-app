@@ -1,8 +1,9 @@
-
 import { App, LogLevel } from '@slack/bolt';
-import { APIService } from './infrastructure/api_service';
 import { config } from 'dotenv';
-import mentions from './mentions';
+
+import { APIService } from './infrastructure/api_service';
+import { MentionsController } from './interfaces/mentions_controller';
+import { SlackAdapter } from './infrastructure/slack_adapter';
 
 /** Configure Environment Variables */
 config();
@@ -15,12 +16,23 @@ const app = new App({
   socketMode: false,
   logLevel: LogLevel.DEBUG,
 });
-const service = new APIService({
+
+const apiService = new APIService({
   baseURL: process.env.ROTA_API_URL || '',
 });
 
-/** Register Listeners */
-mentions.register(app, service);
+const slackAdapter = new SlackAdapter();
+
+const mentionsController = new MentionsController({
+  apiService: apiService,
+  slackAdapter: slackAdapter
+});
+
+/** Register event handlers */
+app.event('app_mention', async ({ event, say }) => {
+  slackAdapter.setSayFn(say);
+  mentionsController.handleMention(event.text);
+});
 
 /** Start Bolt App */
 (async () => {

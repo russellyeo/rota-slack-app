@@ -1,43 +1,37 @@
-import { mentionsParser } from '../src/mentions/parse';
-import { Rota } from '../src/entities/rota';
-
 import { expect, jest } from '@jest/globals';
 import { SayArguments } from "@slack/bolt";
 
-import { APIService } from '../src/infrastructure/api_service';
-import APIServiceMock, { mockGetRotas, mockCreateRota, mockDeleteRota, mockAddUsersToRota, mockGetRota, mockRotateRota, mockUpdateRota, mockGetUserByName } from '../src/infrastructure/__mocks__/api_service';
+import { APIService } from '../../src/infrastructure/api_service';
+import MockAPIService, { mockGetRotas, mockCreateRota, mockDeleteRota, mockAddUsersToRota, mockGetRota, mockRotateRota, mockUpdateRota, mockGetUserByName } from '../../src/infrastructure/__mocks__/api_service';
+import { SlackAdapter } from '../../src/infrastructure/slack_adapter';
+import MockSlackAdapter, { mockSay, mockSetSayFn } from '../../src/infrastructure/__mocks__/slack_adapter';
+import { MentionsController } from '../../src/interfaces/mentions_controller';
+import { Rota } from '../../src/entities/rota';
 
-jest.mock('../src/services/api_service', () => {
+jest.mock('../../src/infrastructure/api_service', () => {
   return {
-    APIService: jest.fn().mockImplementation(() => APIServiceMock),
+    APIService: jest.fn().mockImplementation(() => MockAPIService),
+  };
+});
+
+jest.mock('../../src/infrastructure/slack_adapter', () => {
+  return {
+    SlackAdapter: jest.fn().mockImplementation(() => MockSlackAdapter),
   };
 });
 
 describe('app_mentions parsing', () => {
 
   const mockAPIService = new APIService({ baseURL: 'https://www.example.com' });
-  const mockSay = jest.fn((message: string | SayArguments) => {
-    return Promise.resolve({
-      ok: true,
-      channel: 'channel_id',
-      ts: 'timestamp',
-      message: {
-        type: 'message',
-        text: typeof message === 'string' ? message : 'dummy_response_text'
-      }
-    });
+  const mockSlackAdapter = new SlackAdapter();
+
+  const mentionsController = new MentionsController({
+    apiService: mockAPIService,
+    slackAdapter: mockSlackAdapter,
   });
 
   beforeEach(() => {
-    mockGetRota.mockClear();
-    mockGetRotas.mockClear();
-    mockCreateRota.mockClear();
-    mockDeleteRota.mockClear();
-    mockAddUsersToRota.mockClear();
-    mockGetUserByName.mockClear();
-    mockUpdateRota.mockClear();
-    mockRotateRota.mockClear();
-    mockSay.mockClear();
+    jest.clearAllMocks();
   });
 
   it('should list rotas', async () => {
@@ -48,7 +42,7 @@ describe('app_mentions parsing', () => {
     ] as Array<Rota>);
     // WHEN we parse the input 'list'
     const input = 'list';
-    await mentionsParser(input, mockAPIService, mockSay);
+    await mentionsController.handleMention(input);
     // THEN the API service should be called
     expect(mockGetRotas).toHaveBeenCalledTimes(1);
     // AND the response should be sent to the user
@@ -84,7 +78,7 @@ describe('app_mentions parsing', () => {
 
   it('should list available commands when asked for help', async () => {
     const input = 'help';
-    await mentionsParser(input, mockAPIService, mockSay);
+    await mentionsController.handleMention(input);
     expect(mockSay).toHaveBeenCalledTimes(1);
   });
 
@@ -95,7 +89,7 @@ describe('app_mentions parsing', () => {
     );
     // WHEN
     const input = 'create standup "daily standup"';
-    await mentionsParser(input, mockAPIService, mockSay);
+    await mentionsController.handleMention(input);
     // THEN
     expect(mockCreateRota).toHaveBeenCalledWith('standup', 'daily standup');
     expect(mockSay).toHaveBeenCalledWith({
@@ -118,7 +112,7 @@ describe('app_mentions parsing', () => {
     );
     // WHEN
     const input = 'create standup';
-    await mentionsParser(input, mockAPIService, mockSay);
+    await mentionsController.handleMention(input);
     // THEN
     expect(mockCreateRota).toHaveBeenCalledWith('standup', undefined);
     expect(mockSay).toHaveBeenCalledWith({
@@ -139,7 +133,7 @@ describe('app_mentions parsing', () => {
     mockDeleteRota.mockResolvedValue(undefined);
     // WHEN
     const input = 'delete standup';
-    await mentionsParser(input, mockAPIService, mockSay);
+    await mentionsController.handleMention(input);
     // THEN
     expect(mockDeleteRota).toHaveBeenCalledWith('standup');
     expect(mockSay).toHaveBeenCalledWith({
@@ -160,7 +154,7 @@ describe('app_mentions parsing', () => {
     mockAddUsersToRota.mockResolvedValue(undefined);
     // WHEN
     const input = 'add standup @Sara @Yusuf';
-    await mentionsParser(input, mockAPIService, mockSay);
+    await mentionsController.handleMention(input);
     // THEN
     expect(mockAddUsersToRota).toHaveBeenCalledWith('standup', ['@Sara', '@Yusuf']);
     expect(mockSay).toHaveBeenCalledTimes(1);
@@ -171,7 +165,7 @@ describe('app_mentions parsing', () => {
     mockUpdateRota.mockResolvedValue(undefined);
     // WHEN
     const input = 'assign @Russell standup';
-    await mentionsParser(input, mockAPIService, mockSay);
+    await mentionsController.handleMention(input);
     // THEN
     expect(mockSay).toHaveBeenCalledTimes(1);
   });
@@ -185,7 +179,7 @@ describe('app_mentions parsing', () => {
     });
     // WHEN
     const input = 'who standup';
-    await mentionsParser(input, mockAPIService, mockSay);
+    await mentionsController.handleMention(input);
     // THEN
     expect(mockGetRota).toHaveBeenCalledTimes(1);
     expect(mockGetRota).toHaveBeenCalledWith("standup")
@@ -202,7 +196,7 @@ describe('app_mentions parsing', () => {
     });
     // WHEN
     const input = 'rotate standup';
-    await mentionsParser(input, mockAPIService, mockSay);
+    await mentionsController.handleMention(input);
     // THEN
     expect(mockRotateRota).toHaveBeenCalledTimes(1);
     expect(mockRotateRota).toHaveBeenCalledWith("standup")
@@ -213,7 +207,7 @@ describe('app_mentions parsing', () => {
   describe('show', () => {
     it("should show a rota", async () => {
       const input = 'show standup';
-      await mentionsParser(input, mockAPIService, mockSay);
+      await mentionsController.handleMention(input);
       expect(mockGetRota).toHaveBeenCalledWith('standup');
       expect(mockSay).toHaveBeenCalledTimes(1);
     });
@@ -229,7 +223,7 @@ describe('app_mentions parsing', () => {
   describe('unknown', () => {
     it('should handle an unknown command', async () => {
       const input = 'unknown command';
-      await mentionsParser(input, mockAPIService, mockSay);
+      await mentionsController.handleMention(input);
       expect(mockSay).toHaveBeenCalledTimes(1);
       expect(mockSay).toHaveBeenCalledWith("🤔 I'm sorry, I didn't understand that. Please try rephrasing your question or enter `@Rota help` to see a list of available commands.");
     });

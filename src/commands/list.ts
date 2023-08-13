@@ -1,22 +1,22 @@
-import { IAPIService } from "../../infrastructure/api_service";
-import { Rota } from "../../entities/rota";
-import { SayFn } from "@slack/bolt";
+import { Rota } from "../entities/rota";
+import { IAPIService } from "../infrastructure/api_service";
+import { ISlackAdapter } from "../infrastructure/slack_adapter";
 
 /**
  * List command
  * 
  * List all rota names in the workspace
  *
- * @param service - An instance of the APIService.
- * @param say - The SayFn function from Slack Bolt used to send a message.
+ * @param apiService - An instance of the APIService.
+ * @param slackAdapter - An instance of the SlackAdapter.
  * @returns A Promise that resolves when command is complete.
  */
-export const list = async (service: IAPIService, say: SayFn): Promise<void> => {
+export const list = async (apiService: IAPIService, slackAdapter: ISlackAdapter): Promise<void> => {
   try {
-    const rotas = await service.getRotas();
+    const rotas = await apiService.getRotas();
 
     if (rotas.length === 0) {
-      await say({
+      await slackAdapter.say({
         blocks: [
           {
             type: 'section',
@@ -40,7 +40,7 @@ export const list = async (service: IAPIService, say: SayFn): Promise<void> => {
         .join('\n');
 
 
-      await say({
+      await slackAdapter.say({
         blocks: [
           {
             type: 'section',
@@ -70,6 +70,6 @@ export const list = async (service: IAPIService, say: SayFn): Promise<void> => {
       });
     }
   } catch (error: any) {
-    await say(error.message);
+    await slackAdapter.say(error.message);
   }
 };

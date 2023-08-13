@@ -1,16 +1,16 @@
-import { SayFn } from "@slack/bolt";
+import { ISlackAdapter } from "../infrastructure/slack_adapter";
 
 /**
  * Help command
  * 
  * Shows the possible commands to the user
  *
- * @param say - The SayFn function from Slack Bolt used to send a message.
+ * @param slackAdapter - An instance of the SlackAdapter.
  * @returns A Promise that resolves when command is complete.
  */
-export const help = async (say: SayFn): Promise<void> => {
+export const help = async (slackAdapter: ISlackAdapter): Promise<void> => {
   try {
-    await say(
+    await slackAdapter.say(
       {
         "blocks": [
           {
@@ -87,6 +87,6 @@ export const help = async (say: SayFn): Promise<void> => {
       }
     );
   } catch (error: any) {
-    await say(error.message);
+    await slackAdapter.say(error.message);
   }
 };

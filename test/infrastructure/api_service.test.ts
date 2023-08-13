@@ -1,5 +1,5 @@
-import { APIService } from '../src/services/api_service';
-import { Rota } from '../src/entities/rota';
+import { APIService } from '../../src/infrastructure/api_service';
+import { Rota } from '../../src/entities/rota';
 
 import axios from 'axios';
 jest.mock("axios");

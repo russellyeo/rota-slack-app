@@ -1,24 +1,24 @@
-import { IAPIService } from "../../infrastructure/api_service";
-import { SayFn } from "@slack/bolt";
+import { IAPIService } from "../infrastructure/api_service";
+import { ISlackAdapter } from "../infrastructure/slack_adapter";
 
 /**
  * Show command
  * 
  * Fetch a given rota and send a message with it's details.
  *
- * @param service - An instance of the APIService.
- * @param say - The SayFn function from Slack Bolt used to send a message.
+ * @param apiService - An instance of the APIService.
+ * @param slackAdapter - An instance of the SlackAdapter.
  * @param rotaName - The name of the rota to show.
  * @returns A Promise that resolves when command is complete.
  */
-export const show = async (service: IAPIService, say: SayFn, rotaName: string): Promise<void> => {
+export const show = async (apiService: IAPIService, slackAdapter: ISlackAdapter, rotaName: string): Promise<void> => {
   try {
-    const rota = await service.getRota(rotaName);
+    const rota = await apiService.getRota(rotaName);
 
     const assignedInfo = (rota.assigned) ? `Assigned: \`${rota.assigned}\`` : 'No assigned user'
     const usersInfo = (rota.users.length > 0) ? rota.users.map(x => `\`${x}\``) : 'No users in rota'
 
-    await say({
+    await slackAdapter.say({
       blocks: [
         {
           type: 'section',
@@ -44,6 +44,6 @@ export const show = async (service: IAPIService, say: SayFn, rotaName: string): 
       ]
     });
   } catch (error: any) {
-    await say(error.message);
+    await slackAdapter.say(error.message);
   }
 };
