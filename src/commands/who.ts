@@ -4,7 +4,7 @@ import { ISlackAdapter } from "../infrastructure/slack_adapter";
 interface Dependencies {
   apiService: IAPIService;
   slackAdapter: ISlackAdapter;
-  errorHandler: (slackAdapter: ISlackAdapter, error: unknown) => Promise<void>;
+  errorHandler: (error: unknown) => Promise<void>;
 }
 
 export const WhoCommand = {
@@ -24,7 +24,7 @@ export const WhoCommand = {
         const message = handoff ? `${rota.assigned} ${handoff}` : `${rota.assigned}`;
         await dependencies.slackAdapter.say(message);
       } catch (error: unknown) {
-        await dependencies.errorHandler(dependencies.slackAdapter, error);
+        await dependencies.errorHandler(error);
       }
     };
   }

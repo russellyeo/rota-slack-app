@@ -4,7 +4,7 @@ import { ISlackAdapter } from "../infrastructure/slack_adapter";
 interface Dependencies {
   apiService: IAPIService;
   slackAdapter: ISlackAdapter;
-  errorHandler: (slackAdapter: ISlackAdapter, error: unknown) => Promise<void>;
+  errorHandler: (error: unknown) => Promise<void>;
 }
 
 export const ShowCommand = {
@@ -50,7 +50,7 @@ export const ShowCommand = {
           ]
         });
       } catch (error: unknown) {
-        await dependencies.errorHandler(dependencies.slackAdapter, error);
+        await dependencies.errorHandler(error);
       }
     };
   }

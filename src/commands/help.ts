@@ -2,7 +2,7 @@ import { ISlackAdapter } from "../infrastructure/slack_adapter";
 
 interface Dependencies {
   slackAdapter: ISlackAdapter;
-  errorHandler: (slackAdapter: ISlackAdapter, error: unknown) => Promise<void>;
+  errorHandler: (error: unknown) => Promise<void>;
 }
 
 export const HelpCommand = {
@@ -93,7 +93,7 @@ export const HelpCommand = {
           }
         );
       } catch (error: unknown) {
-        await dependencies.errorHandler(dependencies.slackAdapter, error);
+        await dependencies.errorHandler(error);
       }
     };
   }
