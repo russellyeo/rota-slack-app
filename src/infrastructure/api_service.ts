@@ -18,6 +18,7 @@ class APIService implements IAPIService {
 
   constructor({ baseURL }: { baseURL: string }) {
     this.baseURL = baseURL;
+    axios.defaults.headers['Content-Type'] = 'application/json';
   }
 
   /**
