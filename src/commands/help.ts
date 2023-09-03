@@ -86,6 +86,13 @@ export const HelpCommand = {
                 "type": "section",
                 "text": {
                   "type": "mrkdwn",
+                  "text": ":wave:  `@Rota remove [user] from [rota-name]` remove a user from a rota."
+                }
+              },
+              {
+                "type": "section",
+                "text": {
+                  "type": "mrkdwn",
                   "text": ":information_desk_person:  `@Rota help` show this list of commands."
                 }
               }
