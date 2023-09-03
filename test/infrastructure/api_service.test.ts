@@ -238,4 +238,33 @@ describe('APIService', () => {
     });
   });
 
+  describe('removeUserFromRota', () => {
+    it('should successfully remove a user from a rota', async () => {
+      // GIVEN axios.delete will return a successful response
+      jest.mocked(axios.delete).mockResolvedValue({ status: 204 });
+      // WHEN we remove a user from a rota
+      const result = await apiService.removeUserFromRota('standup', '@Russell');
+      // THEN the user is removed from the rota
+      expect(axios.delete).toHaveBeenCalledWith("https://example.com/api/rotas/standup/users/@Russell");
+      expect(result).toBeUndefined();
+    });
+  });
+
+  it('should return an error if the rota does not exist', async () => {
+    // GIVEN axios.delete will return an error
+    jest.mocked(axios.delete).mockRejectedValue({ status: 404, message: "Rota not found" });
+    // WHEN we remove a user from a rota
+    const result = apiService.removeUserFromRota('standup', '@Russell');
+    // THEN an error is thrown
+    await expect(result).rejects.toThrowError('Could not remove `@Russell` from `standup`. Error: Rota not found.');
+  });
+
+  it('should return an error if the user does not exist in the rota', async () => {
+    // GIVEN axios.delete will return an error
+    jest.mocked(axios.delete).mockRejectedValue({ status: 404, message: "User not found" });
+    // WHEN we remove a user from a rota
+    const result = apiService.removeUserFromRota('standup', '@Russell');
+    // THEN an error is thrown
+    await expect(result).rejects.toThrowError('Could not remove `@Russell` from `standup`. Error: User not found.');
+  });
 });

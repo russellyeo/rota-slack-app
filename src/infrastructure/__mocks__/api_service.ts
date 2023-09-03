@@ -9,6 +9,7 @@ export const mockAddUsersToRota = jest.fn()
 export const mockGetUserByName = jest.fn()
 export const mockUpdateRota = jest.fn()
 export const mockRotateRota = jest.fn()
+export const mockRemoveUserFromRota = jest.fn()
 
 const MockAPIService: IAPIService = {
   getRota: mockGetRota,
@@ -18,7 +19,8 @@ const MockAPIService: IAPIService = {
   addUsersToRota: mockAddUsersToRota,
   getUserByName: mockGetUserByName,
   updateRota: mockUpdateRota,
-  rotateRota: mockRotateRota
+  rotateRota: mockRotateRota,
+  removeUserFromRota: mockRemoveUserFromRota
 };
 
 export default MockAPIService as jest.Mocked<typeof MockAPIService>;

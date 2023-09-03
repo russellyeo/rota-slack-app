@@ -11,6 +11,7 @@ interface IAPIService {
   getUserByName(name: string): Promise<User>;
   updateRota(rota: string, assigned: number): Promise<undefined>;
   rotateRota(rota: string): Promise<Rota>;
+  removeUserFromRota(rotaName: string, userName: string): Promise<undefined>;
 }
 
 class APIService implements IAPIService {
@@ -162,6 +163,24 @@ class APIService implements IAPIService {
       return response.data;
     } catch (error) {
       throw new Error(`Could not rotate \`${rota}\` rota. Error: ${(error as Error).message}.`);
+    }
+  }
+
+  /**
+   * Remove a user from a rota.
+   * @param {string} rotaName - The name of the rota to delete a user from.
+   * @param {string} userName - The name of the user to delete.
+   * @returns {Promise<undefined>} A Promise that resolves to undefined if the update was successful.
+   * @throws {Error} If the request fails or the response is not valid JSON.
+   */
+  async removeUserFromRota(rotaName: string, userName: string): Promise<undefined> {
+    try {
+      await axios.delete<undefined>(
+        `${this.baseURL}/api/rotas/${rotaName}/users/${userName}`
+      );
+      return undefined;
+    } catch (error) {
+      throw new Error(`Could not remove \`${userName}\` from \`${rotaName}\`. Error: ${(error as Error).message}.`);
     }
   }
 }
