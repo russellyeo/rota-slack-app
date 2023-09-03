@@ -1,11 +1,11 @@
 import { expect, jest } from '@jest/globals';
 
 import { APIService } from '../../src/infrastructure/api_service';
-import MockAPIService, { mockGetRotas, mockCreateRota, mockDeleteRota, mockAddUsersToRota, mockGetRota, mockRotateRota, mockUpdateRota, mockGetUserByName } from '../../src/infrastructure/__mocks__/api_service';
+import MockAPIService, { mockGetRotas, mockCreateRota, mockDeleteRota, mockAddUsersToRota, mockGetRota, mockRotateRota, mockUpdateRota, mockRemoveUserFromRota } from '../../src/infrastructure/__mocks__/api_service';
 import { SlackAdapter } from '../../src/infrastructure/slack_adapter';
-import MockSlackAdapter, { mockSay, mockSetSayFn } from '../../src/infrastructure/__mocks__/slack_adapter';
+import MockSlackAdapter, { mockSay } from '../../src/infrastructure/__mocks__/slack_adapter';
 import { MentionsController } from '../../src/interfaces/mentions_controller';
-import { Rota, RotaDescription } from '../../src/entities/rota';
+import { RotaDescription } from '../../src/entities/rota';
 
 jest.mock('../../src/infrastructure/api_service', () => {
   return {
@@ -109,7 +109,7 @@ describe('MentionsController', () => {
   it('should create a new rota with just a name', async () => {
     // GIVEN
     mockCreateRota.mockResolvedValue(
-      { name: 'standup', description: null },
+      { name: 'standup', description: undefined },
     );
     // WHEN
     const input = 'create standup';
