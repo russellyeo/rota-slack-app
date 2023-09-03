@@ -240,6 +240,26 @@ describe('MentionsController', () => {
     // });
   });
 
+  describe('remove_user', () => {
+    it("should remove a user from a rota", async () => {
+      const input = 'remove @Russell from standup';
+      await mentionsController.handleMention(input);
+      expect(mockRemoveUserFromRota).toHaveBeenCalledWith('standup', '@Russell');
+      expect(mockSay).toHaveBeenCalledTimes(1);
+      expect(mockSay).toHaveBeenCalledWith({
+        "blocks": [
+          {
+            "text": {
+              "text": "Successfully removed `@Russell` from `standup`",
+              "type": "mrkdwn"
+            },
+            "type": "section"
+          }
+        ]
+      });
+    });
+  });
+
   describe('unknown', () => {
     it('should handle an unknown command', async () => {
       const input = 'unknown command';
