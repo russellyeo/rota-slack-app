@@ -1,11 +1,11 @@
 import { expect, jest } from '@jest/globals';
 
 import { APIService } from '../../src/infrastructure/api_service';
-import MockAPIService, { mockGetRotas, mockCreateRota, mockDeleteRota, mockAddUsersToRota, mockGetRota, mockRotateRota, mockUpdateRota, mockGetUserByName } from '../../src/infrastructure/__mocks__/api_service';
+import MockAPIService, { mockGetRotas, mockCreateRota, mockDeleteRota, mockAddUsersToRota, mockGetRota, mockRotateRota, mockUpdateRota, mockRemoveUserFromRota } from '../../src/infrastructure/__mocks__/api_service';
 import { SlackAdapter } from '../../src/infrastructure/slack_adapter';
-import MockSlackAdapter, { mockSay, mockSetSayFn } from '../../src/infrastructure/__mocks__/slack_adapter';
+import MockSlackAdapter, { mockSay } from '../../src/infrastructure/__mocks__/slack_adapter';
 import { MentionsController } from '../../src/interfaces/mentions_controller';
-import { Rota, RotaDescription } from '../../src/entities/rota';
+import { RotaDescription } from '../../src/entities/rota';
 
 jest.mock('../../src/infrastructure/api_service', () => {
   return {
@@ -109,7 +109,7 @@ describe('MentionsController', () => {
   it('should create a new rota with just a name', async () => {
     // GIVEN
     mockCreateRota.mockResolvedValue(
-      { name: 'standup', description: null },
+      { name: 'standup', description: undefined },
     );
     // WHEN
     const input = 'create standup';
@@ -238,6 +238,26 @@ describe('MentionsController', () => {
     //   expect(mockGetRota).toHaveBeenCalledTimes(0);
     //   expect(mockSay).toHaveBeenCalledWith("🤔 I'm sorry, I didn't understand that. Please try rephrasing your question or enter `@Rota help` to see a list of available commands.");
     // });
+  });
+
+  describe('remove_user', () => {
+    it("should remove a user from a rota", async () => {
+      const input = 'remove @Russell from standup';
+      await mentionsController.handleMention(input);
+      expect(mockRemoveUserFromRota).toHaveBeenCalledWith('standup', '@Russell');
+      expect(mockSay).toHaveBeenCalledTimes(1);
+      expect(mockSay).toHaveBeenCalledWith({
+        "blocks": [
+          {
+            "text": {
+              "text": "Successfully removed `@Russell` from `standup`",
+              "type": "mrkdwn"
+            },
+            "type": "section"
+          }
+        ]
+      });
+    });
   });
 
   describe('unknown', () => {

@@ -12,6 +12,7 @@ import { ListCommand } from '../commands/list';
 import { RotateCommand } from '../commands/rotate';
 import { ShowCommand } from '../commands/show';
 import { WhoCommand } from '../commands/who';
+import { RemoveUserCommand } from '../commands/remove_user';
 
 import { MessageSanitizer } from './message_sanitizer';
 import { ErrorHandler } from './error_handler';
@@ -172,6 +173,22 @@ class MentionsController implements IMentionsController {
           });
           const handoff = argv.handoff ? MessageSanitizer.removeQuotes(argv.handoff) : undefined;
           whoCommand(argv.rota, handoff);
+        }
+      })
+      .command({
+        command: 'remove <user> from <rota>',
+        builder: (yargs) => {
+          return yargs
+            .positional('user', { type: 'string' })
+            .positional('rota', { type: 'string' })
+        },
+        handler: (argv) => {
+          const removeUserCommand = RemoveUserCommand.make({
+            apiService: this.apiService,
+            slackAdapter: this.slackAdapter,
+            errorHandler: errorHandler
+          });
+          removeUserCommand(argv.rota, argv.user);
         }
       })
       .command({
