@@ -1,0 +1,15 @@
+# node/npm
+node_modules/
+
+# macOS
+.DS_Store
+
+# environment vars
+.env*
+!.env.sample
+
+# VS Code
+.vscode/
+
+# build products
+dist/
