@@ -50,7 +50,7 @@ class MentionsController implements IMentionsController {
         builder: (yargs) => {
           return yargs
             .positional('name', { type: 'string' })
-            .option('users', { type: 'string' });
+            .option('users', { type: 'array' });
         },
         handler: (argv) => {
           const addCommand = AddCommand.make({
@@ -58,7 +58,10 @@ class MentionsController implements IMentionsController {
             slackAdapter: this.slackAdapter,
             errorHandler: errorHandler
           });
-          addCommand(argv.name, argv.users);
+          if (argv.name && argv.users) {
+            const users = argv.users.map(user => String(user));
+            addCommand(argv.name, users);
+          }
         }
       })
       .command({
@@ -74,7 +77,9 @@ class MentionsController implements IMentionsController {
             slackAdapter: this.slackAdapter,
             errorHandler: errorHandler
           });
-          assignCommand(argv.user, argv.rota);
+          if (argv.user && argv.rota) {
+            assignCommand(argv.user, argv.rota);
+          }
         }
       })
       .command({
@@ -91,7 +96,9 @@ class MentionsController implements IMentionsController {
             errorHandler: errorHandler
           });
           const description = argv.description ? MessageSanitizer.removeQuotes(argv.description) : undefined;
-          createCommand(argv.name, description);
+          if (argv.name) {
+            createCommand(argv.name, description);
+          }
         }
       })
       .command({
@@ -106,7 +113,9 @@ class MentionsController implements IMentionsController {
             slackAdapter: this.slackAdapter,
             errorHandler: errorHandler
           });
-          deleteCommand(argv.name);
+          if (argv.name) {
+            deleteCommand(argv.name);
+          }
         }
       })
       .command({
@@ -141,7 +150,9 @@ class MentionsController implements IMentionsController {
             slackAdapter: this.slackAdapter,
             errorHandler: errorHandler
           });
-          rotateCommand(argv.rota);
+          if (argv.rota) {
+            rotateCommand(argv.rota);
+          }
         }
       })
       .command({
@@ -155,7 +166,9 @@ class MentionsController implements IMentionsController {
             slackAdapter: this.slackAdapter,
             errorHandler: errorHandler
           });
-          showCommand(argv.name);
+          if (argv.name) {
+            showCommand(argv.name);
+          }
         }
       })
       .command({
@@ -172,7 +185,9 @@ class MentionsController implements IMentionsController {
             errorHandler: errorHandler
           });
           const handoff = argv.handoff ? MessageSanitizer.removeQuotes(argv.handoff) : undefined;
-          whoCommand(argv.rota, handoff);
+          if (argv.rota) {
+            whoCommand(argv.rota, handoff);
+          }
         }
       })
       .command({
@@ -188,7 +203,9 @@ class MentionsController implements IMentionsController {
             slackAdapter: this.slackAdapter,
             errorHandler: errorHandler
           });
-          removeUserCommand(argv.rota, argv.user);
+          if (argv.rota && argv.user) {
+            removeUserCommand(argv.rota, argv.user);
+          }
         }
       })
       .command({
