@@ -1,4 +1,3 @@
-
 import { IAPIService } from '../api_service';
 import { Rota, RotaDescription } from '../../entities/rota';
 import { User } from '../../entities/user';
