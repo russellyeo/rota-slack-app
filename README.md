@@ -55,5 +55,10 @@ npm test
 ngrok http 3000
 ```
 
+### Deploy
+```shell
+fly deploy
+```
+
 ## Notes
 - Authorization/authentication has not yet been implemented (both client-side and server-side), so the bot has not yet been published on the slack app store, and will currently only work in workspaces that have installed the app manually.
