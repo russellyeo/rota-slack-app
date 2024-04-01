@@ -30,7 +30,7 @@ class APIService implements IAPIService {
   async getRotas(): Promise<Array<RotaDescription>> {
     try {
       const response = await axios.get<Array<RotaDescription>>(
-        `${this.baseURL}/api/rotas`
+        `${this.baseURL}/api/v1/rotas`
       );
       return response.data;
     } catch (error) {
@@ -47,7 +47,7 @@ class APIService implements IAPIService {
   async getRota(name: string): Promise<Rota> {
     try {
       const response = await axios.get<Rota>(
-        `${this.baseURL}/api/rotas/${name}`
+        `${this.baseURL}/api/v1/rotas/${name}`
       );
       return response.data;
     } catch (error) {
@@ -65,7 +65,7 @@ class APIService implements IAPIService {
   async createRota(name: string, description?: string): Promise<RotaDescription> {
     try {
       const response = await axios.post<RotaDescription>(
-        `${this.baseURL}/api/rotas`,
+        `${this.baseURL}/api/v1/rotas`,
         JSON.stringify({ name, description })
       );
       return response.data;
@@ -83,7 +83,7 @@ class APIService implements IAPIService {
   async deleteRota(name: string): Promise<undefined> {
     try {
       await axios.delete<undefined>(
-        `${this.baseURL}/api/rotas/${name}`
+        `${this.baseURL}/api/v1/rotas/${name}`
       );
       return undefined;
     } catch (error) {
@@ -104,7 +104,7 @@ class APIService implements IAPIService {
     }
     try {
       const response = await axios.post<undefined>(
-        `${this.baseURL}/api/rotas/${name}/users`,
+        `${this.baseURL}/api/v1/rotas/${name}/users`,
         JSON.stringify({ users })
       );
       return response.data;
@@ -122,7 +122,7 @@ class APIService implements IAPIService {
   async getUserByName(name: string): Promise<User> {
     try {
       const response = await axios.get<User>(
-        `${this.baseURL}/api/users/by-name/${encodeURIComponent(name)}`
+        `${this.baseURL}/api/v1/users/by-name/${encodeURIComponent(name)}`
       );
       return response.data;
     } catch (error) {
@@ -140,7 +140,7 @@ class APIService implements IAPIService {
   async updateRota(rota: string, assigned: number): Promise<undefined> {
     try {
       await axios.patch(
-        `${this.baseURL}/api/rotas/${rota}`,
+        `${this.baseURL}/api/v1/rotas/${rota}`,
         JSON.stringify({ assigned })
       );
       return undefined;
@@ -158,7 +158,7 @@ class APIService implements IAPIService {
   async rotateRota(rota: string): Promise<Rota> {
     try {
       const response = await axios.get<Rota>(
-        `${this.baseURL}/api/rotas/${rota}/rotate`
+        `${this.baseURL}/api/v1/rotas/${rota}/rotate`
       );
       return response.data;
     } catch (error) {
@@ -176,7 +176,7 @@ class APIService implements IAPIService {
   async removeUserFromRota(rotaName: string, userName: string): Promise<undefined> {
     try {
       await axios.delete<undefined>(
-        `${this.baseURL}/api/rotas/${rotaName}/users/${userName}`
+        `${this.baseURL}/api/v1/rotas/${rotaName}/users/${userName}`
       );
       return undefined;
     } catch (error) {
