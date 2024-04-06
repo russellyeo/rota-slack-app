@@ -25,7 +25,7 @@ describe('APIService', () => {
       // THEN the expectedRotas array is returned
       expect(result).toEqual(expectedRotas);
       // AND axios.get is called with the correct URL
-      expect(axios.get).toHaveBeenCalledWith('https://example.com/api/rotas');
+      expect(axios.get).toHaveBeenCalledWith('https://example.com/api/v1/rotas');
     });
 
     it('should throw an error if the request fails', async () => {
@@ -115,7 +115,7 @@ describe('APIService', () => {
       // WHEN we delete the rota
       const result = await apiService.deleteRota('retrospective');
       // THEN the rota is deleted
-      expect(axios.delete).toHaveBeenCalledWith("https://example.com/api/rotas/retrospective");
+      expect(axios.delete).toHaveBeenCalledWith("https://example.com/api/v1/rotas/retrospective");
       expect(result).toBeUndefined();
     });
 
@@ -138,7 +138,7 @@ describe('APIService', () => {
       // THEN the rota is updated
       expect(result).toBeUndefined();
       expect(axios.post).toHaveBeenCalledWith(
-        "https://example.com/api/rotas/standup/users",
+        "https://example.com/api/v1/rotas/standup/users",
         JSON.stringify({ "users": ["@Yasmin", "@Florian"] })
       );
     });
@@ -166,7 +166,7 @@ describe('APIService', () => {
       // WHEN we get a user by name
       const result = await apiService.getUserByName('@Russell');
       // THEN the user is returned
-      expect(axios.get).toHaveBeenCalledWith("https://example.com/api/users/by-name/%40Russell");
+      expect(axios.get).toHaveBeenCalledWith("https://example.com/api/v1/users/by-name/%40Russell");
       expect(result).toEqual({ id: 1, name: "@Russell" });
     });
 
@@ -177,7 +177,7 @@ describe('APIService', () => {
       const result = apiService.getUserByName('@Russell');
       // THEN an error is thrown
       await expect(result).rejects.toThrowError('Could not get user `@Russell`. Error: User not found.');
-      expect(axios.get).toHaveBeenCalledWith("https://example.com/api/users/by-name/%40Russell");
+      expect(axios.get).toHaveBeenCalledWith("https://example.com/api/v1/users/by-name/%40Russell");
     });
   });
 
@@ -189,7 +189,7 @@ describe('APIService', () => {
       const result = await apiService.updateRota('standup', 1);
       // THEN the rota is updated
       expect(axios.patch).toHaveBeenCalledWith(
-        "https://example.com/api/rotas/standup",
+        "https://example.com/api/v1/rotas/standup",
         JSON.stringify({ "assigned": 1 })
       );
       expect(result).toBeUndefined();
@@ -224,7 +224,7 @@ describe('APIService', () => {
         assigned: "@Helena",
         users: ["@Yusuf", "@Helena"]
       };
-      expect(axios.get).toHaveBeenCalledWith("https://example.com/api/rotas/standup/rotate");
+      expect(axios.get).toHaveBeenCalledWith("https://example.com/api/v1/rotas/standup/rotate");
       expect(result).toStrictEqual(expectedRota);
     });
 
@@ -245,7 +245,7 @@ describe('APIService', () => {
       // WHEN we remove a user from a rota
       const result = await apiService.removeUserFromRota('standup', '@Russell');
       // THEN the user is removed from the rota
-      expect(axios.delete).toHaveBeenCalledWith("https://example.com/api/rotas/standup/users/@Russell");
+      expect(axios.delete).toHaveBeenCalledWith("https://example.com/api/v1/rotas/standup/users/@Russell");
       expect(result).toBeUndefined();
     });
   });
