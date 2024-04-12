@@ -2,8 +2,10 @@ import { App, LogLevel } from '@slack/bolt';
 import { config } from 'dotenv';
 
 import { APIService } from './infrastructure/api_service';
+import { AuthenticationService } from './infrastructure/authentication_service';
 import { MentionsController } from './interfaces/mentions_controller';
 import { SlackAdapter } from './infrastructure/slack_adapter';
+import axios from 'axios';
 
 /** Configure Environment Variables */
 config();
@@ -15,9 +17,12 @@ if (!baseURL) {
 
 /** Initialization */
 
-const apiService = new APIService({
-  baseURL: baseURL,
-});
+const apiClient = axios.create({ baseURL: baseURL });
+apiClient.defaults.headers['Content-Type'] = 'application/json';
+
+const apiService = new APIService({ baseURL: baseURL });
+
+const authenticationService = new AuthenticationService({ apiClient: apiClient });
 
 const slackAdapter = new SlackAdapter();
 
@@ -30,55 +35,69 @@ const app = new App({
   signingSecret: process.env.SLACK_SIGNING_SECRET,
   clientId: process.env.SLACK_CLIENT_ID,
   clientSecret: process.env.SLACK_CLIENT_SECRET,
-  stateSecret: 'my-state-secret',
+  stateSecret: process.env.STATE_SECRET,
   scopes: ['app_mentions:read', 'chat:write'],
   logLevel: LogLevel.DEBUG,
+  redirectUri: process.env.REDIRECT_URI,
   installationStore: {
     storeInstallation: async (installation) => {
-      // TODO: change the code below so it saves to your database
-      if (installation.isEnterpriseInstall && installation.enterprise !== undefined) {
-        // support for org wide app installation
-        // return await database.set(installation.enterprise.id, installation);
-        throw new Error(`Unimplemented: save enterprise installation id ${installation.enterprise.id}`);
-      }
-      if (installation.team !== undefined) {
-        // single team app installation
-        // return await database.set(installation.team.id, installation);
-        throw new Error(`Unimplemented: save team installation id ${installation.team.id}`);
-      }
-      throw new Error('Failed saving installation data to installationStore');
+        if (installation.isEnterpriseInstall && installation.enterprise !== undefined) {
+          try {
+            return authenticationService.createEnterpriseInstallation(installation);
+          } catch(error) {
+            throw new Error(`Failed storing installation for enterprise id ${installation.enterprise.id}. Error: ${error}.`);
+          }
+        }
+        if (installation.team !== undefined) {
+          try {
+            return authenticationService.createTeamInstallation(installation);
+          } catch(error) {
+            throw new Error(`Failed storing installation for team id ${installation.team.id}. Error: ${error}.`);
+          }
+        }
+        throw new Error('Failed storing installation');
     },
     fetchInstallation: async (installQuery) => {
-      // TODO: change the code below so it fetches from your database
       if (installQuery.isEnterpriseInstall && installQuery.enterpriseId !== undefined) {
-        // org wide app installation lookup
-        // return await database.get(installQuery.enterpriseId);
-        throw new Error(`Unimplemented: fetch org installation id for ${installQuery.enterpriseId}`);
+        try {
+          return authenticationService.fetchEnterpriseInstallation(installQuery.enterpriseId);
+        } catch(error) {
+          throw new Error(`Failed fetching installation for enterprise id ${installQuery.enterpriseId}. Error: ${error}.`);
+        }
       }
       if (installQuery.teamId !== undefined) {
-        // single team app installation lookup
-        // return await database.get(installQuery.teamId);
-        throw new Error(`Unimplemented: fetch team installation id for ${installQuery.teamId}`);
+        try {
+          return authenticationService.fetchTeamInstallation(installQuery.teamId);
+        } catch(error) {
+          throw new Error(`Failed fetching installation for team id ${installQuery.teamId}. Error: ${error}.`);
+        }
       }
       throw new Error('Failed fetching installation');
     },
     deleteInstallation: async (installQuery) => {
-      // TODO: change the code below so it deletes from your database
       if (installQuery.isEnterpriseInstall && installQuery.enterpriseId !== undefined) {
-        // org wide app installation deletion
-        // return await database.delete(installQuery.enterpriseId);
-        throw new Error(`Unimplemented: delete org installation id for ${installQuery.enterpriseId}`);
+        try {
+          return authenticationService.deleteEnterpriseInstallation(installQuery.enterpriseId);
+        } catch(error) {
+          throw new Error(`Failed deleting installation for enterprise id ${installQuery.enterpriseId}. Error: ${error}.`);
+        }
       }
       if (installQuery.teamId !== undefined) {
-        // single team app installation deletion
-        // return await database.delete(installQuery.teamId);
-        throw new Error(`Unimplemented: delete team installation id for ${installQuery.teamId}`);
+        try {
+          return authenticationService.deleteTeamInstallation(installQuery.teamId);
+        } catch(error) {
+          throw new Error(`Failed deleting installation for team id ${installQuery.enterpriseId}. Error: ${error}.`);
+        }
       }
       throw new Error('Failed to delete installation');
     },
   },
   installerOptions: {
-    directInstall: true
+    authVersion: "v2",
+    directInstall: true,
+    installPath: "/slack/install",
+    redirectUriPath: "/slack/oauth_redirect",
+    stateVerification: false,
   }
 });
 
