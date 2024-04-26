@@ -10,6 +10,7 @@ import { DeleteCommand } from '../commands/delete';
 import { HelpCommand } from '../commands/help';
 import { ListCommand } from '../commands/list';
 import { RotateCommand } from '../commands/rotate';
+import { SayCommand } from '../commands/say';
 import { ShowCommand } from '../commands/show';
 import { WhoCommand } from '../commands/who';
 import { RemoveUserCommand } from '../commands/remove_user';
@@ -208,6 +209,23 @@ class MentionsController implements IMentionsController {
           }
         }
       })
+      .command({
+        command: 'say <message>',
+        builder: (yargs) => {
+          return yargs
+            .positional('message', {  type: 'string' })
+        },
+        handler: (argv) => {
+          const sayCommand = SayCommand.make({
+            slackAdapter: this.slackAdapter,
+            errorHandler: errorHandler
+          });
+          const message = argv.message ? MessageSanitizer.removeQuotes(argv.message) : undefined;
+          if (message) {
+            sayCommand(message);
+          }
+        }
+      })      
       .command({
         command: '*',
         handler: () => {

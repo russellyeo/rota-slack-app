@@ -260,6 +260,15 @@ describe('MentionsController', () => {
     });
   });
 
+  describe('say', () => {
+    it('should repeat the input back to the user', async () => {
+      const input = 'say "Hello, World!"';
+      await mentionsController.handleMention(input);
+      expect(mockSay).toHaveBeenCalledTimes(1);
+      expect(mockSay).toHaveBeenCalledWith("Hello, World!");
+    });
+  });
+
   describe('unknown', () => {
     it('should handle an unknown command', async () => {
       const input = 'unknown command';
