@@ -93,6 +93,13 @@ export const HelpCommand = {
                 "type": "section",
                 "text": {
                   "type": "mrkdwn",
+                  "text": ":speech_balloon:  `@Rota say \"[message]\"` repeat a message"
+                }
+              },
+              {
+                "type": "section",
+                "text": {
+                  "type": "mrkdwn",
                   "text": ":information_desk_person:  `@Rota help` show this list of commands."
                 }
               }
